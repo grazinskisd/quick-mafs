@@ -1,28 +1,32 @@
 ﻿using UnityEngine;
 
-public class Board : MonoBehaviour
+namespace QuickMafs
 {
-    public int Width;
-    public int Height;
-    public GameObject TilePrefab;
-
-    private GameObject[,] _board;
-
-	private void Start () {
-        _board = new GameObject[Width, Height];
-        InitializeBoard();
-	}
-
-    private void InitializeBoard()
+    public class Board : MonoBehaviour
     {
-        for (int row = 0; row < Width; row++)
+        public int Width;
+        public int Height;
+        public GameObject TilePrefab;
+
+        private GameObject[,] _board;
+
+        private void Start()
         {
-            for (int col = 0; col < Height; col++)
+            _board = new GameObject[Width, Height];
+            InitializeBoard();
+        }
+
+        private void InitializeBoard()
+        {
+            for (int row = 0; row < Width; row++)
             {
-                var tile = Instantiate(TilePrefab);
-                tile.name = string.Format("Tile ({0}, {1})", row, col);
-                tile.transform.SetParent(transform);
-                tile.transform.localPosition = new Vector2(row, col);
+                for (int col = 0; col < Height; col++)
+                {
+                    var tile = Instantiate(TilePrefab);
+                    tile.name = string.Format("Tile ({0}, {1})", row, col);
+                    tile.transform.SetParent(transform);
+                    tile.transform.localPosition = new Vector2(row, col);
+                }
             }
         }
     }
