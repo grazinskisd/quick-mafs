@@ -1,11 +1,42 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace QuickMafs
 {
     [CreateAssetMenu(menuName = "QuickMafs/FontSprites")]
     public class FontSprites : ScriptableObject
     {
-        public LetterToSprite[] FontLetterMap;
+        [SerializeField]
+        private LetterToSprite[] FontLettersMap;
+
+        private Dictionary<Letters, Sprite> _map;
+
+        public Dictionary<Letters, Sprite> Map
+        {
+            get
+            {
+                if(_map == null && FontLettersMap != null)
+                {
+                    _map = new Dictionary<Letters, Sprite>();
+                    for(int i = 0; i < FontLettersMap.Length; i++)
+                    {
+                        _map.Add(FontLettersMap[i].Letter, FontLettersMap[i].Sprite);
+                    }
+                }
+                return _map;
+            }
+        }
+
+        public Sprite GetRandomLetterSprite()
+        {
+            return Map[GetRandomLetter()];
+        }
+
+        private Letters GetRandomLetter()
+        {
+            var array = System.Enum.GetValues(typeof(Letters));
+            return (Letters)array.GetValue(Random.Range(0, array.Length));
+        }
     }
 
     [System.Serializable]

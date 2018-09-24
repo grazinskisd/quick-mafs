@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93792a40e70c81a4995f2c8d005bbf3b, type: 3}
   m_Name: Sans
   m_EditorClassIdentifier: 
-  FontLetterMap:
+  FontLettersMap:
   - Letter: 0
     Sprite: {fileID: 21300000, guid: 25365555dff16024a8d289249da760c9, type: 3}
   - Letter: 1

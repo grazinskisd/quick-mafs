@@ -6,7 +6,8 @@ namespace QuickMafs
     {
         public int Width;
         public int Height;
-        public GameObject TilePrefab;
+        public Tile TilePrefab;
+        public FontSprites Font;
 
         private GameObject[,] _board;
 
@@ -26,6 +27,8 @@ namespace QuickMafs
                     tile.name = string.Format("Tile ({0}, {1})", row, col);
                     tile.transform.SetParent(transform);
                     tile.transform.localPosition = new Vector2(row, col);
+
+                    tile.Text.sprite = Font.GetRandomLetterSprite();
                 }
             }
         }
