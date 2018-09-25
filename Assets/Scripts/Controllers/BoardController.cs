@@ -15,7 +15,6 @@ namespace QuickMafs
 
         private BoardModel _model;
         private TileView[,] _tiles;
-        private TileModel[,] _tileModels;
 
         private const int LEFT_MOUSE_BUTTON = 0;
         private Camera _camera;
@@ -41,7 +40,6 @@ namespace QuickMafs
         {
             _boardView = GameObject.Instantiate(_boardView);
             _tiles = new TileView[_settings.Width, _settings.Height];
-            _tileModels = new TileModel[_settings.Width, _settings.Height];
             InitializeBoard();
         }
 
@@ -60,18 +58,15 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _model.Height; col++)
                 {
-                    var tileModel = new TileModel
-                    {
-                        Letter = FontSettings.GetRandomLetter()
-                    };
                     var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
+                    tile.Letter = FontSettings.GetRandomLetter();
                     tile.transform.localPosition = new Vector2(row, col);
-                    tile.Text.sprite = _font.GetSpriteForLetter(tileModel.Letter);
+                    tile.Text.sprite = _font.GetSpriteForLetter(tile.Letter);
                     tile.name = string.Format("Tile ({0}, {1})", row, col);
+                    tile.Row = row; tile.Col = col;
                     tile.Foreground.color = _settings.DefaultTileColor;
 
                     _tiles[row, col] = tile;
-                    _tileModels[row, col] = tileModel;
                 }
             }
         }
@@ -123,16 +118,16 @@ namespace QuickMafs
 
         private void ProcessDragging()
         {
-            var position = CastRayOnMousePosition();
-            if (position != null &&
-                !_objectList.Contains(_tiles[position.Row, position.Col]) &&
-                IsNeighbouringWithLast(position) &&
-                IsCorrectOrder(position))
+            var tile = CastRayOnMousePosition();
+            if (tile != null &&
+                !_objectList.Contains(_tiles[tile.Row, tile.Col]) &&
+                IsNeighbouringWithLast(tile) &&
+                IsCorrectOrder(tile))
             {
-                if (IsTileASymbol(position))
+                if (IsTileASymbol(tile))
                 {
-                    _lastOperation = _tileModels[position.Row, position.Col].Letter;
-                    SelectTile(position);
+                    _lastOperation = tile.Letter;
+                    SelectTile(tile);
                 }
                 else
                 {
@@ -140,10 +135,10 @@ namespace QuickMafs
                     switch (_lastOperation)
                     {
                         case Letter.L_plus:
-                            nextResult = _currentResult + (int)_tileModels[position.Row, position.Col].Letter;
+                            nextResult = _currentResult + (int)tile.Letter;
                             break;
                         case Letter.L_minus:
-                            nextResult = _currentResult - (int)_tileModels[position.Row, position.Col].Letter;
+                            nextResult = _currentResult - (int)tile.Letter;
                             break;
                         default:
                             break;
@@ -152,7 +147,7 @@ namespace QuickMafs
                     if(nextResult >= 0 && nextResult <= 9)
                     {
                         _currentResult = nextResult;
-                        SelectTile(position);
+                        SelectTile(tile);
                     }
 
                     Debug.Log("CURRENT RESULT: " + _currentResult);
@@ -160,32 +155,31 @@ namespace QuickMafs
             }
         }
 
-        private bool IsCorrectOrder(TilePosition position)
+        private bool IsCorrectOrder(TileView tile)
         {
-            var lastTile = GetPositionFromView(_objectList[_objectList.Count - 1]);
-            return (IsTileANumber(lastTile) && IsTileASymbol(position)) ||
-                (IsTileANumber(position) && IsTileASymbol(lastTile));
+            var lastTile = _objectList[_objectList.Count - 1];
+            return (IsTileANumber(lastTile) && IsTileASymbol(tile)) ||
+                (IsTileANumber(tile) && IsTileASymbol(lastTile));
         }
 
-        private bool IsNeighbouringWithLast(TilePosition position)
+        private bool IsNeighbouringWithLast(TileView tile)
         {
-            var lastPosition = GetPositionFromView(_objectList[_objectList.Count - 1]);
-            return ArePositionsNeighbouring(position, lastPosition);
+            return AreTilesNeighbouring(tile, _objectList[_objectList.Count - 1]);
         }
 
-        private bool ArePositionsNeighbouring(TilePosition position, TilePosition lastPosition)
+        private bool AreTilesNeighbouring(TileView tile, TileView otherTile)
         {
-            return (Mathf.Abs(position.Row - lastPosition.Row) == 1 && position.Col == lastPosition.Col)
-                || (Mathf.Abs(position.Col - lastPosition.Col) == 1 && position.Row == lastPosition.Row);
+            return (Mathf.Abs(tile.Row - otherTile.Row) == 1 && tile.Col == otherTile.Col)
+                || (Mathf.Abs(tile.Col - otherTile.Col) == 1 && tile.Row == otherTile.Row);
         }
 
         private void ProcessMouseDown()
         {
-            var position = CastRayOnMousePosition();
-            if (position != null && IsTileANumber(position))
+            var tileView = CastRayOnMousePosition();
+            if (tileView && IsTileANumber(tileView))
             {
-                SelectTile(position);
-                _currentResult = (int)_tileModels[position.Row, position.Col].Letter;
+                SelectTile(tileView);
+                _currentResult = (int)tileView.Letter;
                 _state = State.Dragging;
             }
             else
@@ -194,55 +188,34 @@ namespace QuickMafs
             }
         }
 
-        private bool IsTileANumber(TilePosition position)
+        private bool IsTileANumber(TileView tileView)
         {
-            return (int)_tileModels[position.Row, position.Col].Letter <= 9;
+            return (int)tileView.Letter <= 9;
         }
 
-        private bool IsTileASymbol(TilePosition position)
+        private bool IsTileASymbol(TileView tileView)
         {
-            return (int)_tileModels[position.Row, position.Col].Letter > 9;
+            return (int)tileView.Letter > 9;
         }
 
-        private void SelectTile(TilePosition position)
+        private void SelectTile(TileView tileView)
         {
-            _tileModels[position.Row, position.Col].isSelected = true;
-            _tiles[position.Row, position.Col].Foreground.color = _settings.SelectedTileColor;
-            _objectList.Add(_tiles[position.Row, position.Col]);
+            tileView.IsSelected = true;
+            tileView.Foreground.color = _settings.SelectedTileColor;
+            _objectList.Add(tileView);
         }
 
         private void DeselectTile(TileView tileView)
         {
-            var position = GetPositionFromView(tileView);
-            _tileModels[position.Row, position.Col].isSelected = false;
+            tileView.IsSelected = false;
             tileView.Foreground.color = _settings.DefaultTileColor;
         }
 
-        private TilePosition CastRayOnMousePosition()
+        private TileView CastRayOnMousePosition()
         {
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
-            if (hit)
-            {
-                var component = hit.collider.gameObject.GetComponent<TileView>();
-                return GetPositionFromView(component);
-            }
-            return null;
-        }
-
-        private TilePosition GetPositionFromView(TileView view)
-        {
-            for (int row = 0; row < _settings.Width; row++)
-            {
-                for (int col = 0; col < _settings.Height; col++)
-                {
-                    if (view == _tiles[row, col])
-                    {
-                        return new TilePosition { Row = row, Col = col };
-                    }
-                }
-            }
-            return null;
+            return hit ? hit.collider.gameObject.GetComponent<TileView>() : null;
         }
         #endregion
 
@@ -261,23 +234,11 @@ namespace QuickMafs
         {
             MouseDown, Dragging, MouseUp, Waiting
         }
-
-        public class TilePosition
-        {
-            public int Row;
-            public int Col;
-        }
     }
 
     public class BoardModel
     {
         public int Width;
         public int Height;
-    }
-
-    public class TileModel
-    {
-        public Letter Letter;
-        public bool isSelected;
     }
 }
