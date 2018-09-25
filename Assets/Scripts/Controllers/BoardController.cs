@@ -108,9 +108,33 @@ namespace QuickMafs
 
         private void ProcessMouseUp()
         {
-            for (int i = 0; i < _objectList.Count; i++)
+            var lastTile = _objectList[_objectList.Count - 1];
+            if (IsTileANumber(lastTile))
             {
-                DeselectTile(_objectList[i]);
+                if(_currentResult == 0)
+                {
+                    for (int i = 0; i < _objectList.Count; i++)
+                    {
+                        GameObject.Destroy(_objectList[i].gameObject);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < _objectList.Count-1; i++)
+                    {
+                        GameObject.Destroy(_objectList[i].gameObject);
+                    }
+                    DeselectTile(lastTile);
+                    lastTile.Letter = (Letter)_currentResult;
+                    lastTile.Text.sprite = _font.GetSpriteForLetter(lastTile.Letter);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _objectList.Count; i++)
+                {
+                    DeselectTile(_objectList[i]);
+                }
             }
             _objectList.Clear();
             _state = State.Waiting;
@@ -149,8 +173,6 @@ namespace QuickMafs
                         _currentResult = nextResult;
                         SelectTile(tile);
                     }
-
-                    Debug.Log("CURRENT RESULT: " + _currentResult);
                 }
             }
         }
