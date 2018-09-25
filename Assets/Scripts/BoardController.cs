@@ -3,22 +3,40 @@ using Zenject;
 
 namespace QuickMafs
 {
-    public class BoardController: IInitializable
+    public class BoardController
     {
-        [Inject] private Board _boardView;
+        [Inject] private BoardView _boardView;
         [Inject] private TileController.Factory _tileFactory;
 
-        public void Initialize()
+        private BoardModel _model;
+
+        [Inject]
+        public void Initialize(BoardParams parameters)
         {
-            _boardView = GameObject.Instantiate(_boardView);
+            SetupModel(parameters);
+            SetupView();
+        }
+
+        private void SetupView()
+        {
+            _boardView = Object.Instantiate(_boardView);
             InitializeBoard();
+        }
+
+        private void SetupModel(BoardParams parameters)
+        {
+            _model = new BoardModel
+            {
+                Width = parameters.Width,
+                Height = parameters.Height
+            };
         }
 
         private void InitializeBoard()
         {
-            for (int row = 0; row < _boardView.Width; row++)
+            for (int row = 0; row < _model.Width; row++)
             {
-                for (int col = 0; col < _boardView.Height; col++)
+                for (int col = 0; col < _model.Height; col++)
                 {
                     var parameters = new TileParams
                     {
@@ -30,5 +48,19 @@ namespace QuickMafs
                 }
             }
         }
+
+        public class Factory: PlaceholderFactory<BoardParams, BoardController> { }
+    }
+
+    public class BoardParams
+    {
+        public int Width;
+        public int Height;
+    }
+
+    public class BoardModel
+    {
+        public int Width;
+        public int Height;
     }
 }
