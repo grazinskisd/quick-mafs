@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -32,6 +31,49 @@ namespace QuickMafs
             _camera = Camera.main;
             _tick.OnTick += Tick;
         }
+
+        #region Initialize
+        private void SetupView()
+        {
+            _boardView = GameObject.Instantiate(_boardView);
+            _tiles = new TileView[_settings.Width, _settings.Height];
+            _tileModels = new TileModel[_settings.Width, _settings.Height];
+            InitializeBoard();
+        }
+
+        private void SetupModel()
+        {
+            _model = new BoardModel
+            {
+                Width = _settings.Width,
+                Height = _settings.Height
+            };
+        }
+
+        private void InitializeBoard()
+        {
+            for (int row = 0; row < _model.Width; row++)
+            {
+                for (int col = 0; col < _model.Height; col++)
+                {
+                    var tileModel = new TileModel
+                    {
+                        Letter = FontSettings.GetRandomLetter()
+                    };
+                    var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
+                    tile.transform.localPosition = new Vector2(row, col);
+                    tile.Text.sprite = _font.GetSpriteForLetter(tileModel.Letter);
+                    tile.name = string.Format("Tile ({0}, {1})", row, col);
+                    tile.Foreground.color = _settings.DefaultTileColor;
+
+                    _tiles[row, col] = tile;
+                    _tileModels[row, col] = tileModel;
+                }
+            }
+        }
+        #endregion
+
+        #region Input
 
         private void Tick()
         {
@@ -144,45 +186,7 @@ namespace QuickMafs
             }
             return null;
         }
-
-        private void SetupView()
-        {
-            _boardView = GameObject.Instantiate(_boardView);
-            _tiles = new TileView[_settings.Width, _settings.Height];
-            _tileModels = new TileModel[_settings.Width, _settings.Height];
-            InitializeBoard();
-        }
-
-        private void SetupModel()
-        {
-            _model = new BoardModel
-            {
-                Width = _settings.Width,
-                Height = _settings.Height
-            };
-        }
-
-        private void InitializeBoard()
-        {
-            for (int row = 0; row < _model.Width; row++)
-            {
-                for (int col = 0; col < _model.Height; col++)
-                {
-                    var tileModel = new TileModel
-                    {
-                        Letter = FontSettings.GetRandomLetter()
-                    };
-                    var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
-                    tile.transform.localPosition = new Vector2(row, col);
-                    tile.Text.sprite = _font.GetSpriteForLetter(tileModel.Letter);
-                    tile.name = string.Format("Tile ({0}, {1})", row, col);
-                    tile.Foreground.color = _settings.DefaultTileColor;
-
-                    _tiles[row, col] = tile;
-                    _tileModels[row, col] = tileModel;
-                }
-            }
-        }
+        #endregion
 
         public class Factory: PlaceholderFactory<BoardController> { }
 
