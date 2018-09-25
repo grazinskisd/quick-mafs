@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -22,6 +23,8 @@ namespace QuickMafs
         private State _state = State.Waiting;
 
         List<TileView> _objectList = new List<TileView>();
+
+        private int _currentResult;
 
         [Inject]
         public void Initialize()
@@ -81,7 +84,7 @@ namespace QuickMafs
             {
                 _state = State.MouseDown;
             }
-            else if (Input.GetMouseButtonUp(LEFT_MOUSE_BUTTON))
+            else if (Input.GetMouseButtonUp(LEFT_MOUSE_BUTTON) && _state == State.Dragging)
             {
                 _state = State.MouseUp;
             }
@@ -119,43 +122,64 @@ namespace QuickMafs
 
         private void ProcessDragging()
         {
-            var tileView = CastRayOnMousePosition();
-            if (tileView && !_objectList.Contains(tileView) && IsNeighbouringWithLast(tileView))
+            var position = CastRayOnMousePosition();
+            if (position != null &&
+                !_objectList.Contains(_tiles[position.Row, position.Col]) &&
+                IsNeighbouringWithLast(position) &&
+                IsCorrectOrder(position))
             {
-                SelectTile(tileView);
+                SelectTile(position);
             }
         }
 
-        private bool IsNeighbouringWithLast(TileView tileView)
+        private bool IsCorrectOrder(TilePosition position)
         {
-            var position = GetPositionFromView(tileView);
+            var lastTile = GetPositionFromView(_objectList[_objectList.Count - 1]);
+            return (IsTileANumber(lastTile) && IsTileASymbol(position)) ||
+                (IsTileANumber(position) && IsTileASymbol(lastTile));
+        }
+
+        private bool IsNeighbouringWithLast(TilePosition position)
+        {
             var lastPosition = GetPositionFromView(_objectList[_objectList.Count - 1]);
             return ArePositionsNeighbouring(position, lastPosition);
         }
 
         private bool ArePositionsNeighbouring(TilePosition position, TilePosition lastPosition)
         {
-            return Mathf.Abs(position.Row - lastPosition.Row) == 1 && position.Col == lastPosition.Col
-                || Mathf.Abs(position.Col - lastPosition.Col) == 1 && position.Row == lastPosition.Row;
+            return (Mathf.Abs(position.Row - lastPosition.Row) == 1 && position.Col == lastPosition.Col)
+                || (Mathf.Abs(position.Col - lastPosition.Col) == 1 && position.Row == lastPosition.Row);
         }
 
         private void ProcessMouseDown()
         {
-            var tileView = CastRayOnMousePosition();
-            if (tileView)
+            var position = CastRayOnMousePosition();
+            if (position != null && IsTileANumber(position))
             {
-                SelectTile(tileView);
+                SelectTile(position);
+                _state = State.Dragging;
             }
-
-            _state = State.Dragging;
+            else
+            {
+                _state = State.Waiting;
+            }
         }
 
-        private void SelectTile(TileView tileView)
+        private bool IsTileANumber(TilePosition position)
         {
-            var position = GetPositionFromView(tileView);
+            return (int)_tileModels[position.Row, position.Col].Letter <= 9;
+        }
+
+        private bool IsTileASymbol(TilePosition position)
+        {
+            return (int)_tileModels[position.Row, position.Col].Letter > 9;
+        }
+
+        private void SelectTile(TilePosition position)
+        {
             _tileModels[position.Row, position.Col].isSelected = true;
-            tileView.Foreground.color = _settings.SelectedTileColor;
-            _objectList.Add(tileView);
+            _tiles[position.Row, position.Col].Foreground.color = _settings.SelectedTileColor;
+            _objectList.Add(_tiles[position.Row, position.Col]);
         }
 
         private void DeselectTile(TileView tileView)
@@ -165,11 +189,16 @@ namespace QuickMafs
             tileView.Foreground.color = _settings.DefaultTileColor;
         }
 
-        private TileView CastRayOnMousePosition()
+        private TilePosition CastRayOnMousePosition()
         {
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
-            return hit ? hit.collider.gameObject.GetComponent<TileView>() : null;
+            if (hit)
+            {
+                var component = hit.collider.gameObject.GetComponent<TileView>();
+                return GetPositionFromView(component);
+            }
+            return null;
         }
 
         private TilePosition GetPositionFromView(TileView view)

@@ -35,7 +35,7 @@ namespace QuickMafs
         public static Letter GetRandomLetter()
         {
             var array = System.Enum.GetValues(typeof(Letter));
-            return (Letter)array.GetValue(Random.Range(0, array.Length));
+            return (Letter)array.GetValue(Random.Range(1, array.Length));
         }
 
         [System.Serializable]
