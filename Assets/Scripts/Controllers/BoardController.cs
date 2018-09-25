@@ -115,13 +115,17 @@ namespace QuickMafs
                 {
                     for (int i = 0; i < _objectList.Count; i++)
                     {
-                        GameObject.Destroy(_objectList[i].gameObject);
+                        var tile = _objectList[i];
+                        _tiles[tile.Row, tile.Col] = null;
+                        GameObject.Destroy(tile.gameObject);
                     }
                 }
                 else
                 {
                     for (int i = 0; i < _objectList.Count-1; i++)
                     {
+                        var tile = _objectList[i];
+                        _tiles[tile.Row, tile.Col] = null;
                         GameObject.Destroy(_objectList[i].gameObject);
                     }
                     DeselectTile(lastTile);
@@ -137,7 +141,31 @@ namespace QuickMafs
                 }
             }
             _objectList.Clear();
+            CleanupColumns();
             _state = State.Waiting;
+        }
+
+        private void CleanupColumns()
+        {
+            int nullCount = 0;
+            for (int row = 0; row < _settings.Width; row++)
+            {
+                for (int col = 0; col < _settings.Height; col++)
+                {
+                    if(_tiles[row, col] == null)
+                    {
+                        nullCount += 1;
+                    }
+                    else if(nullCount > 0)
+                    {
+                        _tiles[row, col].transform.Translate(new Vector3(0, -nullCount));
+                        _tiles[row, col].Col = col - nullCount;
+                        _tiles[row, col - nullCount] = _tiles[row, col];
+                        _tiles[row, col] = null;
+                    }
+                }
+                nullCount = 0;
+            }
         }
 
         private void ProcessDragging()
