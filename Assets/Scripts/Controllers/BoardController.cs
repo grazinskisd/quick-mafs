@@ -58,19 +58,23 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _model.Height; col++)
                 {
-                    var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
-                    tile.Letter = FontSettings.GetRandomLetter();
-                    tile.transform.localPosition = new Vector2(row, col);
-                    tile.Text.sprite = _font.GetSpriteForLetter(tile.Letter);
-                    tile.name = string.Format("Tile ({0}, {1})", row, col);
-                    tile.Row = row; tile.Col = col;
-                    tile.Foreground.color = _settings.DefaultTileColor;
-
-                    _tiles[row, col] = tile;
+                    AddNewTile(row, col);
                 }
             }
         }
         #endregion
+
+        private void AddNewTile(int row, int col)
+        {
+            var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
+            tile.Letter = FontSettings.GetRandomLetter();
+            tile.transform.localPosition = new Vector2(row, col);
+            tile.Text.sprite = _font.GetSpriteForLetter(tile.Letter);
+            tile.name = string.Format("Tile ({0}, {1})", row, col);
+            tile.Row = row; tile.Col = col;
+            tile.Foreground.color = _settings.DefaultTileColor;
+            _tiles[row, col] = tile;
+        }
 
         #region Input
 
@@ -142,7 +146,22 @@ namespace QuickMafs
             }
             _objectList.Clear();
             CleanupColumns();
+            RefilBoard();
             _state = State.Waiting;
+        }
+
+        private void RefilBoard()
+        {
+            for (int row = 0; row < _settings.Width; row++)
+            {
+                for (int col = 0; col < _settings.Height; col++)
+                {
+                    if (_tiles[row, col] == null)
+                    {
+                        AddNewTile(row, col);
+                    }
+                }
+            }
         }
 
         private void CleanupColumns()
