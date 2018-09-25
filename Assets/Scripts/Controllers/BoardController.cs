@@ -13,7 +13,6 @@ namespace QuickMafs
         [Inject] private TileView _viewPrototype;
         [Inject] private TickManager _tick;
 
-        private BoardModel _model;
         private TileView[,] _tiles;
 
         private const int LEFT_MOUSE_BUTTON = 0;
@@ -29,7 +28,6 @@ namespace QuickMafs
         [Inject]
         public void Initialize()
         {
-            SetupModel();
             SetupView();
             _camera = Camera.main;
             _tick.OnTick += Tick;
@@ -43,20 +41,11 @@ namespace QuickMafs
             InitializeBoard();
         }
 
-        private void SetupModel()
-        {
-            _model = new BoardModel
-            {
-                Width = _settings.Width,
-                Height = _settings.Height
-            };
-        }
-
         private void InitializeBoard()
         {
-            for (int row = 0; row < _model.Width; row++)
+            for (int row = 0; row < _settings.Width; row++)
             {
-                for (int col = 0; col < _model.Height; col++)
+                for (int col = 0; col < _settings.Height; col++)
                 {
                     AddNewTile(row, col);
                 }
@@ -259,12 +248,12 @@ namespace QuickMafs
 
         private bool IsTileANumber(TileView tileView)
         {
-            return (int)tileView.Letter <= 9;
+            return tileView.Letter <= Letter.L_9;
         }
 
         private bool IsTileASymbol(TileView tileView)
         {
-            return (int)tileView.Letter > 9;
+            return tileView.Letter > Letter.L_9;
         }
 
         private void SelectTile(TileView tileView)
@@ -303,11 +292,5 @@ namespace QuickMafs
         {
             MouseDown, Dragging, MouseUp, Waiting
         }
-    }
-
-    public class BoardModel
-    {
-        public int Width;
-        public int Height;
     }
 }
