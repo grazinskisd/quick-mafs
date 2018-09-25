@@ -6,13 +6,11 @@ namespace QuickMafs
     public class BoardController: IInitializable
     {
         [Inject] private Board _boardView;
-
-        private Tile[,] _tiles;
+        [Inject] private TileController.Factory _tileFactory;
 
         public void Initialize()
         {
             _boardView = GameObject.Instantiate(_boardView);
-            _tiles = new Tile[_boardView.Width, _boardView.Height];
             InitializeBoard();
         }
 
@@ -22,12 +20,13 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _boardView.Height; col++)
                 {
-                    var tile = GameObject.Instantiate(_boardView.TilePrefab);
-                    tile.name = string.Format("Tile ({0}, {1})", row, col);
-                    tile.transform.SetParent(_boardView.transform);
-                    tile.transform.localPosition = new Vector2(row, col);
-
-                    tile.Text.sprite = _boardView.Font.GetRandomLetterSprite();
+                    var parameters = new TileParams
+                    {
+                        Name = string.Format("Tile ({0}, {1})", row, col),
+                        Position = new Vector2(row, col),
+                        Parent = _boardView.transform
+                    };
+                    _tileFactory.Create(parameters);
                 }
             }
         }

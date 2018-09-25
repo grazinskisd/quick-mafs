@@ -6,7 +6,5 @@ namespace QuickMafs
     {
         public int Width;
         public int Height;
-        public Tile TilePrefab;
-        public FontSprites Font;
     }
 }

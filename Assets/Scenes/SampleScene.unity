@@ -220,6 +220,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameBoard: {fileID: 114886654052522540, guid: 7ab86e5ad8702984cab055f6c6fc62e5,
     type: 2}
+  TileView: {fileID: 114598750980223990, guid: d0300bb5a5e0f5549bb16a731dd4b8e6, type: 2}
+  Font: {fileID: 11400000, guid: a23c9903cf966a142a3d704db403b0f5, type: 2}
 --- !u!114 &2044525578
 MonoBehaviour:
   m_ObjectHideFlags: 0
