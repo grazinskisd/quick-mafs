@@ -25,6 +25,7 @@ namespace QuickMafs
         List<TileView> _objectList = new List<TileView>();
 
         private int _currentResult;
+        private Letter _lastOperation;
 
         [Inject]
         public void Initialize()
@@ -128,7 +129,34 @@ namespace QuickMafs
                 IsNeighbouringWithLast(position) &&
                 IsCorrectOrder(position))
             {
-                SelectTile(position);
+                if (IsTileASymbol(position))
+                {
+                    _lastOperation = _tileModels[position.Row, position.Col].Letter;
+                    SelectTile(position);
+                }
+                else
+                {
+                    int nextResult = 0;
+                    switch (_lastOperation)
+                    {
+                        case Letter.L_plus:
+                            nextResult = _currentResult + (int)_tileModels[position.Row, position.Col].Letter;
+                            break;
+                        case Letter.L_minus:
+                            nextResult = _currentResult - (int)_tileModels[position.Row, position.Col].Letter;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if(nextResult >= 0 && nextResult <= 9)
+                    {
+                        _currentResult = nextResult;
+                        SelectTile(position);
+                    }
+
+                    Debug.Log("CURRENT RESULT: " + _currentResult);
+                }
             }
         }
 
@@ -157,6 +185,7 @@ namespace QuickMafs
             if (position != null && IsTileANumber(position))
             {
                 SelectTile(position);
+                _currentResult = (int)_tileModels[position.Row, position.Col].Letter;
                 _state = State.Dragging;
             }
             else
