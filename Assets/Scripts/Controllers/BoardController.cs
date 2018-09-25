@@ -6,10 +6,12 @@ namespace QuickMafs
     public class BoardController
     {
         [Inject] private Settings _settings;
+        [Inject] private FontSettings _font;
         [Inject] private BoardView _boardView;
-        [Inject] private TileController.Factory _tileFactory;
+        [Inject] private TileView _viewPrototype;
 
         private BoardModel _model;
+        private TileView[,] _tiles;
 
         [Inject]
         public void Initialize()
@@ -21,6 +23,7 @@ namespace QuickMafs
         private void SetupView()
         {
             _boardView = Object.Instantiate(_boardView);
+            _tiles = new TileView[_settings.Width, _settings.Height];
             InitializeBoard();
         }
 
@@ -39,13 +42,13 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _model.Height; col++)
                 {
-                    var parameters = new TileController.Settings
-                    {
-                        Name = string.Format("Tile ({0}, {1})", row, col),
-                        Position = new Vector2(row, col),
-                        Parent = _boardView.transform
-                    };
-                    _tileFactory.Create(parameters);
+                    var tile = Object.Instantiate(_viewPrototype, _boardView.transform, false);
+                    tile.transform.localPosition = new Vector2(row, col);
+                    tile.Text.sprite = _font.GetSpriteForLetter(FontSettings.GetRandomLetter());
+                    tile.name = string.Format("Tile ({0}, {1})", row, col);
+                    tile.Foreground.color = _settings.DefaultTileColor;
+
+                    _tiles[row, col] = tile;
                 }
             }
         }
@@ -57,6 +60,8 @@ namespace QuickMafs
         {
             public int Width;
             public int Height;
+            public Color DefaultTileColor;
+            public Color SelectedTileColor;
         }
     }
 

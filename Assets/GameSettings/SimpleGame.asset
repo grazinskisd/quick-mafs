@@ -15,3 +15,5 @@ MonoBehaviour:
   BoardSettings:
     Width: 7
     Height: 10
+    DefaultTileColor: {r: 0.21226418, g: 0.42430094, b: 1, a: 1}
+    SelectedTileColor: {r: 0.9339623, g: 0.72532904, b: 0.22467959, a: 1}
