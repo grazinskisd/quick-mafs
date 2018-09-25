@@ -14,7 +14,7 @@ namespace QuickMafs
             Container.BindInstance(TileView);
 
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<InputController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TickManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<BoardController>().AsSingle();
             Container.BindFactory<BoardController, BoardController.Factory>().AsSingle();
         }
