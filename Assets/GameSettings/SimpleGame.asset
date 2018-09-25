@@ -8,8 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9074bc6fd7dda2444831165aeb77640f, type: 3}
+  m_Script: {fileID: 11500000, guid: 49e20a0566c3578468c65286335e4c66, type: 3}
   m_Name: SimpleGame
   m_EditorClassIdentifier: 
-  BoardWidth: 7
-  BoardHeight: 10
+  FontSettings: {fileID: 11400000, guid: a23c9903cf966a142a3d704db403b0f5, type: 2}
+  BoardSettings:
+    Width: 7
+    Height: 10

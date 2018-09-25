@@ -5,15 +5,16 @@ namespace QuickMafs
 {
     public class BoardController
     {
+        [Inject] private Settings _settings;
         [Inject] private BoardView _boardView;
         [Inject] private TileController.Factory _tileFactory;
 
         private BoardModel _model;
 
         [Inject]
-        public void Initialize(BoardParams parameters)
+        public void Initialize()
         {
-            SetupModel(parameters);
+            SetupModel();
             SetupView();
         }
 
@@ -23,12 +24,12 @@ namespace QuickMafs
             InitializeBoard();
         }
 
-        private void SetupModel(BoardParams parameters)
+        private void SetupModel()
         {
             _model = new BoardModel
             {
-                Width = parameters.Width,
-                Height = parameters.Height
+                Width = _settings.Width,
+                Height = _settings.Height
             };
         }
 
@@ -38,7 +39,7 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _model.Height; col++)
                 {
-                    var parameters = new TileParams
+                    var parameters = new TileController.Settings
                     {
                         Name = string.Format("Tile ({0}, {1})", row, col),
                         Position = new Vector2(row, col),
@@ -49,13 +50,14 @@ namespace QuickMafs
             }
         }
 
-        public class Factory: PlaceholderFactory<BoardParams, BoardController> { }
-    }
+        public class Factory: PlaceholderFactory<BoardController> { }
 
-    public class BoardParams
-    {
-        public int Width;
-        public int Height;
+        [System.Serializable]
+        public class Settings
+        {
+            public int Width;
+            public int Height;
+        }
     }
 
     public class BoardModel

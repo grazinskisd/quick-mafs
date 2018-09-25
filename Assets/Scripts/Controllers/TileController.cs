@@ -5,43 +5,43 @@ namespace QuickMafs
 {
     public class TileController
     {
-        [Inject] private FontSprites _font;
+        [Inject] private FontSettings _font;
         [Inject] private TileView _view;
 
         private TileModel _model;
 
         [Inject]
-        private void Initialize(TileParams parameters)
+        private void Initialize(Settings settings)
         {
-            InitializeModel(parameters);
-            InitializeView(parameters);
+            InitializeModel(settings);
+            InitializeView(settings);
         }
 
-        private void InitializeView(TileParams parameters)
+        private void InitializeView(Settings settings)
         {
-            _view = Object.Instantiate(_view, parameters.Parent, false);
-            _view.transform.localPosition = parameters.Position;
+            _view = Object.Instantiate(_view, settings.Parent, false);
+            _view.transform.localPosition = settings.Position;
             _view.Text.sprite = _font.GetSpriteForLetter(_model.Letter);
-            _view.name = parameters.Name;
+            _view.name = settings.Name;
         }
 
-        private void InitializeModel(TileParams parameters)
+        private void InitializeModel(Settings settings)
         {
             _model = new TileModel
             {
-                Letter = FontSprites.GetRandomLetter(),
-                Position = parameters.Position
+                Letter = FontSettings.GetRandomLetter(),
+                Position = settings.Position
             };
         }
 
-        public class Factory: PlaceholderFactory<TileParams, TileController> { }
-    }
+        public class Factory: PlaceholderFactory<Settings, TileController> { }
 
-    public class TileParams
-    {
-        public string Name;
-        public Vector3 Position;
-        public Transform Parent;
+        public class Settings
+        {
+            public string Name;
+            public Vector3 Position;
+            public Transform Parent;
+        }
     }
 
     public class TileModel

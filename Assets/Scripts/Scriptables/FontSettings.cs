@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace QuickMafs
 {
-    [CreateAssetMenu(menuName = "QuickMafs/FontSprites")]
-    public class FontSprites : ScriptableObject
+    [CreateAssetMenu(menuName = "QuickMafs/FontSettings")]
+    public class FontSettings : ScriptableObject
     {
         [SerializeField]
         private LetterToSprite[] FontLettersMap;
@@ -37,13 +37,13 @@ namespace QuickMafs
             var array = System.Enum.GetValues(typeof(Letter));
             return (Letter)array.GetValue(Random.Range(0, array.Length));
         }
-    }
 
-    [System.Serializable]
-    public class LetterToSprite
-    {
-        public Letter Letter;
-        public Sprite Sprite;
+        [System.Serializable]
+        public class LetterToSprite
+        {
+            public Letter Letter;
+            public Sprite Sprite;
+        }
     }
 
     public enum Letter
