@@ -1,6 +1,7 @@
 ﻿using Zenject;
 using UnityEngine;
 using System;
+using DG.Tweening;
 
 namespace QuickMafs
 {
@@ -59,6 +60,7 @@ namespace QuickMafs
         {
             IsSelected = false;
             SetDefaultColor();
+            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
         }
 
         public bool IsTileANumber()
@@ -86,6 +88,7 @@ namespace QuickMafs
         {
             IsSelected = true;
             SetSelectedColor();
+            _tileView.transform.DOScale(_settings.SelectedScale, _settings.ScaleDuration);
             if(Selected != null)
             {
                 Selected(this);
@@ -109,6 +112,9 @@ namespace QuickMafs
         {
             public Color DefaultTileColor;
             public Color SelectedTileColor;
+            public float DefaultScale;
+            public float SelectedScale;
+            public float ScaleDuration;
         }
     }
 
