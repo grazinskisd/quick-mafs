@@ -3,12 +3,9 @@ using Zenject;
 
 namespace QuickMafs
 {
-    public delegate void InputManagerSelectEventHandler(TileView tileView);
     public delegate void InputManagerEventHandler();
     public class InputManager : IInitializable, ITickable
     {
-        public event InputManagerSelectEventHandler FirstTileSelected;
-        public event InputManagerSelectEventHandler TileSelected;
         public event InputManagerEventHandler MouseUp;
 
         private const int LEFT_MOUSE_BUTTON = 0;
@@ -70,40 +67,29 @@ namespace QuickMafs
 
         private void ProcessDragging()
         {
-            CheckIfTileSelected();
+            SelectTileAtMouseLocation();
         }
 
         private void ProcessMouseDown()
         {
-            CheckIfFirstTileSelected();
+            SelectTileAtMouseLocation();
             _state = State.Dragging;
         }
 
-        private void CheckIfTileSelected()
+        private void SelectTileAtMouseLocation()
         {
             var tileView = CastRayOnMousePosition();
-            if (tileView && TileSelected != null)
+            if (tileView)
             {
-                TileSelected(tileView);
-            }
-        }
-
-        private void CheckIfFirstTileSelected()
-        {
-            var tileView = CastRayOnMousePosition();
-            if (tileView && FirstTileSelected != null)
-            {
-                FirstTileSelected(tileView);
+                tileView.SelectTile();
             }
         }
 
         private TileView CastRayOnMousePosition()
         {
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            // TODO: optimize
-            //Physics2D.RaycastNonAlloc(ray.origin, ray.direction, _raycastOut);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
-            return hit ? hit.collider.gameObject.GetComponent<TileView>() : null;
+            int hits = Physics2D.RaycastNonAlloc(ray.origin, ray.direction, _raycastOut);
+            return hits > 0 ? _raycastOut[0].collider.gameObject.GetComponent<TileView>() : null;
         }
     }
 }

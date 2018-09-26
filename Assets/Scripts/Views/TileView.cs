@@ -13,11 +13,6 @@ namespace QuickMafs
         public event TileViewEventHandler Selected;
         public event TileViewEventHandler Unselected;
 
-        public int Row;
-        public int Col;
-        public Letter Letter;
-        public bool IsSelected;
-
         public void SelectTile()
         {
             IssueEvent(Selected);

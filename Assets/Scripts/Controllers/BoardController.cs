@@ -8,15 +8,13 @@ namespace QuickMafs
     public class BoardController
     {
         [Inject] private Settings _settings;
-        [Inject] private FontSettings _font;
         [Inject] private BoardView _boardView;
-        [Inject] private TileView _viewPrototype;
         [Inject] private InputManager _input;
+        [Inject] private BoardService _boardService;
+        [Inject] private TileController.Factory _tileFactory;
 
-        private TileView[,] _tiles;
-
-        List<TileView> _objectList = new List<TileView>();
-
+        private TileController[,] _tiles;
+        private List<TileController> _selectedTiles = new List<TileController>();
         private int _currentResult;
         private Letter _lastOperation;
 
@@ -24,128 +22,36 @@ namespace QuickMafs
         public void Initialize()
         {
             SetupView();
-            _input.FirstTileSelected += OnFirstTileSelected;
-            _input.TileSelected += OnTileSelected;
             _input.MouseUp += OnMouseUp;
+        }
+
+        public bool IsSelectionValid(TileController tile)
+        {
+            return IsValidFirstSelection(tile) || IsValidNextSelection(tile);
+        }
+
+        private bool IsValidNextSelection(TileController tile)
+        {
+            return _selectedTiles.Count > 0 &&
+                            !_selectedTiles.Contains(tile) &&
+                            _boardService.AreTilesNeighbouring(tile, _selectedTiles[_selectedTiles.Count - 1]) &&
+                            _boardService.IsCorrectOrder(tile, _selectedTiles[_selectedTiles.Count - 1]) &&
+                            IsNextResultInBounds(tile);
+        }
+
+        private bool IsValidFirstSelection(TileController tile)
+        {
+            return _selectedTiles.Count == 0 && tile.IsTileANumber();
         }
 
         private void SetupView()
         {
             _boardView = GameObject.Instantiate(_boardView);
-            _tiles = new TileView[_settings.Width, _settings.Height];
-            InitializeBoard();
+            _tiles = new TileController[_settings.Width, _settings.Height];
+            FillBoard();
         }
 
-        private void InitializeBoard()
-        {
-            for (int row = 0; row < _settings.Width; row++)
-            {
-                for (int col = 0; col < _settings.Height; col++)
-                {
-                    AddNewTile(row, col);
-                }
-            }
-        }
-
-        private void AddNewTile(int row, int col)
-        {
-            var tile = GameObject.Instantiate(_viewPrototype, _boardView.transform, false);
-            tile.Letter = FontSettings.GetRandomLetter();
-            tile.transform.localPosition = new Vector2(row, col);
-            tile.Text.sprite = _font.GetSpriteForLetter(tile.Letter);
-            tile.name = string.Format("Tile ({0}, {1})", row, col);
-            tile.Row = row; tile.Col = col;
-            tile.Foreground.color = _settings.DefaultTileColor;
-            _tiles[row, col] = tile;
-        }
-
-        private void OnMouseUp()
-        {
-            if (_objectList.Count == 0) return;
-
-            var lastTile = _objectList[_objectList.Count - 1];
-            if (IsTileANumber(lastTile))
-            {
-                if (_currentResult == 0)
-                {
-                    for (int i = 0; i < _objectList.Count; i++)
-                    {
-                        var tile = _objectList[i];
-                        _tiles[tile.Row, tile.Col] = null;
-                        GameObject.Destroy(tile.gameObject);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < _objectList.Count - 1; i++)
-                    {
-                        var tile = _objectList[i];
-                        _tiles[tile.Row, tile.Col] = null;
-                        GameObject.Destroy(_objectList[i].gameObject);
-                    }
-                    DeselectTile(lastTile);
-                    lastTile.Letter = (Letter)_currentResult;
-                    lastTile.Text.sprite = _font.GetSpriteForLetter(lastTile.Letter);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < _objectList.Count; i++)
-                {
-                    DeselectTile(_objectList[i]);
-                }
-            }
-            _objectList.Clear();
-            CleanupColumns();
-            RefilBoard();
-        }
-
-        private void OnTileSelected(TileView tile)
-        {
-            if (_objectList.Count > 0 &&
-                !_objectList.Contains(_tiles[tile.Row, tile.Col]) &&
-                IsNeighbouringWithLast(tile) &&
-                IsCorrectOrder(tile))
-            {
-                if (IsTileASymbol(tile))
-                {
-                    _lastOperation = tile.Letter;
-                    SelectTile(tile);
-                }
-                else
-                {
-                    int nextResult = 0;
-                    switch (_lastOperation)
-                    {
-                        case Letter.L_plus:
-                            nextResult = _currentResult + (int)tile.Letter;
-                            break;
-                        case Letter.L_minus:
-                            nextResult = _currentResult - (int)tile.Letter;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if (nextResult >= 0 && nextResult <= 9)
-                    {
-                        _currentResult = nextResult;
-                        SelectTile(tile);
-                    }
-                }
-            }
-        }
-
-        private void OnFirstTileSelected(TileView tileView)
-        {
-            if (IsTileANumber(tileView))
-            {
-                SelectTile(tileView);
-                _currentResult = (int)tileView.Letter;
-            }
-        }
-
-        private void RefilBoard()
+        private void FillBoard()
         {
             for (int row = 0; row < _settings.Width; row++)
             {
@@ -153,74 +59,112 @@ namespace QuickMafs
                 {
                     if (_tiles[row, col] == null)
                     {
-                        AddNewTile(row, col);
+                        _tiles[row, col] = _tileFactory.Create(NewTileParams(row, col));
+                        _tiles[row, col].Selected += OnTileSelected;
                     }
                 }
             }
         }
 
-        private void CleanupColumns()
+        private TileParams NewTileParams(int row, int col)
         {
-            int nullCount = 0;
-            for (int row = 0; row < _settings.Width; row++)
+            return new TileParams
             {
-                for (int col = 0; col < _settings.Height; col++)
-                {
-                    if(_tiles[row, col] == null)
-                    {
-                        nullCount += 1;
-                    }
-                    else if(nullCount > 0)
-                    {
-                        _tiles[row, col].transform.Translate(new Vector3(0, -nullCount));
-                        _tiles[row, col].Col = col - nullCount;
-                        _tiles[row, col - nullCount] = _tiles[row, col];
-                        _tiles[row, col] = null;
-                    }
-                }
-                nullCount = 0;
+                Row = row,
+                Col = col,
+                Parent = _boardView.transform,
+                Letter = FontSettings.GetRandomLetter(),
+                Board = this
+            };
+        }
+
+        /// <summary>
+        /// [min]: inclusive
+        /// [max]: exclusive
+        /// </summary>
+        /// <param name="min">Inclusive</param>
+        /// <param name="max">Exclusive</param>
+        private void DestroyTilesInRange(int min, int max)
+        {
+            for (int i = min; i < max; i++)
+            {
+                DestroyTile(i);
             }
         }
 
-        private bool IsCorrectOrder(TileView tile)
+        private void OnMouseUp()
         {
-            var lastTile = _objectList[_objectList.Count - 1];
-            return (IsTileANumber(lastTile) && IsTileASymbol(tile)) ||
-                (IsTileANumber(tile) && IsTileASymbol(lastTile));
+            if (AreNoTilesSelected()) return;
+            UpdateSelectedTiles();
+            DeselectSelectedTiles();
+            _selectedTiles.Clear();
+            _boardService.CleanupColumns(_tiles);
+            FillBoard();
         }
 
-        private bool IsNeighbouringWithLast(TileView tile)
+        private void UpdateSelectedTiles()
         {
-            return AreTilesNeighbouring(tile, _objectList[_objectList.Count - 1]);
+            var lastTile = _selectedTiles[_selectedTiles.Count - 1];
+            if (lastTile.IsTileANumber() && _selectedTiles.Count > 1)
+            {
+                if (_currentResult == 0)
+                {
+                    DestroyTilesInRange(0, _selectedTiles.Count);
+                }
+                else
+                {
+                    DestroyTilesInRange(0, _selectedTiles.Count - 1);
+                    lastTile.SetNewLetter((Letter)_currentResult);
+                }
+            }
         }
 
-        private bool AreTilesNeighbouring(TileView tile, TileView otherTile)
+        private void DeselectSelectedTiles()
         {
-            return (Mathf.Abs(tile.Row - otherTile.Row) == 1 && tile.Col == otherTile.Col)
-                || (Mathf.Abs(tile.Col - otherTile.Col) == 1 && tile.Row == otherTile.Row);
+            for (int i = 0; i < _selectedTiles.Count; i++)
+            {
+                if (_selectedTiles[i] != null)
+                {
+                    _selectedTiles[i].DeselectTile();
+                }
+            }
         }
 
-        private bool IsTileANumber(TileView tileView)
+        private void DestroyTile(int i)
         {
-            return tileView.Letter <= Letter.L_9;
+            var tile = _selectedTiles[i];
+            tile.Destroy();
+            tile.Selected -= OnTileSelected;
+            _tiles[tile.Row, tile.Col] = null;
         }
 
-        private bool IsTileASymbol(TileView tileView)
+        private void OnTileSelected(TileController tile)
         {
-            return tileView.Letter > Letter.L_9;
+            if (tile.IsTileASymbol())
+            {
+                _lastOperation = tile.Letter;
+            }
+            else
+            {
+                _currentResult = AreNoTilesSelected() ? (int)tile.Letter : NextResult(tile);
+            }
+            _selectedTiles.Add(tile);
         }
 
-        private void SelectTile(TileView tileView)
+        private bool AreNoTilesSelected()
         {
-            tileView.IsSelected = true;
-            tileView.Foreground.color = _settings.SelectedTileColor;
-            _objectList.Add(tileView);
+            return _selectedTiles.Count == 0;
         }
 
-        private void DeselectTile(TileView tileView)
+        private bool IsNextResultInBounds(TileController tile)
         {
-            tileView.IsSelected = false;
-            tileView.Foreground.color = _settings.DefaultTileColor;
+            if (tile.IsTileASymbol()) return true;
+            return _boardService.IsInNumberBounds(NextResult(tile));
+        }
+
+        private int NextResult(TileController tile)
+        {
+            return _currentResult + _boardService.GetIncrement(_lastOperation, tile);
         }
 
         public class Factory: PlaceholderFactory<BoardController> { }
@@ -230,8 +174,6 @@ namespace QuickMafs
         {
             public int Width;
             public int Height;
-            public Color DefaultTileColor;
-            public Color SelectedTileColor;
         }
     }
 }

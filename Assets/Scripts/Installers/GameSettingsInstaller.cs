@@ -8,11 +8,13 @@ namespace QuickMafs
     {
         public FontSettings FontSettings;
         public BoardController.Settings BoardSettings;
+        public TileController.Settings TileSettings;
 
         public override void InstallBindings()
         {
             Container.BindInstance(FontSettings);
             Container.BindInstance(BoardSettings);
+            Container.BindInstance(TileSettings);
         }
     }
 }
