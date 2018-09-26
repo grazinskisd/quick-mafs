@@ -79,6 +79,8 @@ namespace QuickMafs
         {
             _params.Letter = newLetter;
             _tileView.Text.sprite = _font.GetSpriteForLetter(newLetter);
+            _tileView.transform.localScale = Vector3.one * (_settings.DefaultScale + 0.4f);
+            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
         }
 
         public void Destroy()
