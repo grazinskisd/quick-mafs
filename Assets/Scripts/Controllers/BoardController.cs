@@ -11,14 +11,9 @@ namespace QuickMafs
         [Inject] private FontSettings _font;
         [Inject] private BoardView _boardView;
         [Inject] private TileView _viewPrototype;
-        [Inject] private TickManager _tick;
+        [Inject] private InputManager _input;
 
         private TileView[,] _tiles;
-
-        private const int LEFT_MOUSE_BUTTON = 0;
-        private Camera _camera;
-
-        private State _state = State.Waiting;
 
         List<TileView> _objectList = new List<TileView>();
 
@@ -29,11 +24,11 @@ namespace QuickMafs
         public void Initialize()
         {
             SetupView();
-            _camera = Camera.main;
-            _tick.OnTick += Tick;
+            _input.FirstTileSelected += OnFirstTileSelected;
+            _input.TileSelected += OnTileSelected;
+            _input.MouseUp += OnMouseUp;
         }
 
-        #region Initialize
         private void SetupView()
         {
             _boardView = GameObject.Instantiate(_boardView);
@@ -51,7 +46,6 @@ namespace QuickMafs
                 }
             }
         }
-        #endregion
 
         private void AddNewTile(int row, int col)
         {
@@ -65,46 +59,14 @@ namespace QuickMafs
             _tiles[row, col] = tile;
         }
 
-        #region Input
-
-        private void Tick()
+        private void OnMouseUp()
         {
-            if (Input.GetMouseButtonDown(LEFT_MOUSE_BUTTON))
-            {
-                _state = State.MouseDown;
-            }
-            else if (Input.GetMouseButtonUp(LEFT_MOUSE_BUTTON) && _state == State.Dragging)
-            {
-                _state = State.MouseUp;
-            }
+            if (_objectList.Count == 0) return;
 
-            ProcessState();
-        }
-
-        private void ProcessState()
-        {
-            switch (_state)
-            {
-                case State.MouseDown:
-                    ProcessMouseDown();
-                    break;
-                case State.Dragging:
-                    ProcessDragging();
-                    break;
-                case State.MouseUp:
-                    ProcessMouseUp();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void ProcessMouseUp()
-        {
             var lastTile = _objectList[_objectList.Count - 1];
             if (IsTileANumber(lastTile))
             {
-                if(_currentResult == 0)
+                if (_currentResult == 0)
                 {
                     for (int i = 0; i < _objectList.Count; i++)
                     {
@@ -115,7 +77,7 @@ namespace QuickMafs
                 }
                 else
                 {
-                    for (int i = 0; i < _objectList.Count-1; i++)
+                    for (int i = 0; i < _objectList.Count - 1; i++)
                     {
                         var tile = _objectList[i];
                         _tiles[tile.Row, tile.Col] = null;
@@ -136,7 +98,51 @@ namespace QuickMafs
             _objectList.Clear();
             CleanupColumns();
             RefilBoard();
-            _state = State.Waiting;
+        }
+
+        private void OnTileSelected(TileView tile)
+        {
+            if (_objectList.Count > 0 &&
+                !_objectList.Contains(_tiles[tile.Row, tile.Col]) &&
+                IsNeighbouringWithLast(tile) &&
+                IsCorrectOrder(tile))
+            {
+                if (IsTileASymbol(tile))
+                {
+                    _lastOperation = tile.Letter;
+                    SelectTile(tile);
+                }
+                else
+                {
+                    int nextResult = 0;
+                    switch (_lastOperation)
+                    {
+                        case Letter.L_plus:
+                            nextResult = _currentResult + (int)tile.Letter;
+                            break;
+                        case Letter.L_minus:
+                            nextResult = _currentResult - (int)tile.Letter;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (nextResult >= 0 && nextResult <= 9)
+                    {
+                        _currentResult = nextResult;
+                        SelectTile(tile);
+                    }
+                }
+            }
+        }
+
+        private void OnFirstTileSelected(TileView tileView)
+        {
+            if (IsTileANumber(tileView))
+            {
+                SelectTile(tileView);
+                _currentResult = (int)tileView.Letter;
+            }
         }
 
         private void RefilBoard()
@@ -176,43 +182,6 @@ namespace QuickMafs
             }
         }
 
-        private void ProcessDragging()
-        {
-            var tile = CastRayOnMousePosition();
-            if (tile != null &&
-                !_objectList.Contains(_tiles[tile.Row, tile.Col]) &&
-                IsNeighbouringWithLast(tile) &&
-                IsCorrectOrder(tile))
-            {
-                if (IsTileASymbol(tile))
-                {
-                    _lastOperation = tile.Letter;
-                    SelectTile(tile);
-                }
-                else
-                {
-                    int nextResult = 0;
-                    switch (_lastOperation)
-                    {
-                        case Letter.L_plus:
-                            nextResult = _currentResult + (int)tile.Letter;
-                            break;
-                        case Letter.L_minus:
-                            nextResult = _currentResult - (int)tile.Letter;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if(nextResult >= 0 && nextResult <= 9)
-                    {
-                        _currentResult = nextResult;
-                        SelectTile(tile);
-                    }
-                }
-            }
-        }
-
         private bool IsCorrectOrder(TileView tile)
         {
             var lastTile = _objectList[_objectList.Count - 1];
@@ -229,21 +198,6 @@ namespace QuickMafs
         {
             return (Mathf.Abs(tile.Row - otherTile.Row) == 1 && tile.Col == otherTile.Col)
                 || (Mathf.Abs(tile.Col - otherTile.Col) == 1 && tile.Row == otherTile.Row);
-        }
-
-        private void ProcessMouseDown()
-        {
-            var tileView = CastRayOnMousePosition();
-            if (tileView && IsTileANumber(tileView))
-            {
-                SelectTile(tileView);
-                _currentResult = (int)tileView.Letter;
-                _state = State.Dragging;
-            }
-            else
-            {
-                _state = State.Waiting;
-            }
         }
 
         private bool IsTileANumber(TileView tileView)
@@ -269,14 +223,6 @@ namespace QuickMafs
             tileView.Foreground.color = _settings.DefaultTileColor;
         }
 
-        private TileView CastRayOnMousePosition()
-        {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
-            return hit ? hit.collider.gameObject.GetComponent<TileView>() : null;
-        }
-        #endregion
-
         public class Factory: PlaceholderFactory<BoardController> { }
 
         [System.Serializable]
@@ -286,11 +232,6 @@ namespace QuickMafs
             public int Height;
             public Color DefaultTileColor;
             public Color SelectedTileColor;
-        }
-
-        public enum State
-        {
-            MouseDown, Dragging, MouseUp, Waiting
         }
     }
 }
