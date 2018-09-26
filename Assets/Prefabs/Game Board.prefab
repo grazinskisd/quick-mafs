@@ -35,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 1463153103366286}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -51,8 +51,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a543d7f5000894696ebdb6b2dd911e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 7
-  Height: 10
-  TilePrefab: {fileID: 114598750980223990, guid: d0300bb5a5e0f5549bb16a731dd4b8e6,
-    type: 2}
-  Font: {fileID: 11400000, guid: a23c9903cf966a142a3d704db403b0f5, type: 2}

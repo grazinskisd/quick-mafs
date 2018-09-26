@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FontSettings: {fileID: 11400000, guid: a23c9903cf966a142a3d704db403b0f5, type: 2}
   BoardSettings:
-    Width: 7
+    Width: 5
     Height: 7
   TileSettings:
     DefaultTileColor: {r: 0.086908154, g: 0.58713895, b: 0.8773585, a: 1}

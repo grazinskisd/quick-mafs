@@ -149,11 +149,19 @@ namespace QuickMafs
         {
             if (tile.IsTileASymbol())
             {
-                if(_lastOperation == Letter.L_minus && tile.Letter == Letter.L_minus)
+                if (_selectedTiles.Count > 0)
                 {
-                    _lastOperation = Letter.L_plus;
+                    var lastTile = _selectedTiles[_selectedTiles.Count - 1];
+                    if (_lastOperation == Letter.L_minus && tile.Letter == Letter.L_minus && lastTile.IsTileASymbol())
+                    {
+                        _lastOperation = Letter.L_plus;
+                    }
+                    else if (!(_lastOperation == Letter.L_minus && tile.Letter == Letter.L_plus && lastTile.IsTileASymbol()))
+                    {
+                        _lastOperation = tile.Letter;
+                    }
                 }
-                else if (!(_lastOperation == Letter.L_minus && tile.Letter == Letter.L_plus))
+                else
                 {
                     _lastOperation = tile.Letter;
                 }
