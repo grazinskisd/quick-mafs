@@ -46,6 +46,8 @@ namespace QuickMafs
             _tileView.Selected += OnSelected;
             SetNewLetter(_params.Letter);
             SetDefaultColor();
+            _tileView.transform.localScale = Vector3.one * 0.1f;
+            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
         }
 
         private void OnSelected()
