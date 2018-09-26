@@ -18,6 +18,8 @@ namespace QuickMafs
         private int _currentResult;
         private Letter _lastOperation;
 
+        private bool _isLastANumber;
+
         [Inject]
         public void Initialize()
         {
@@ -59,21 +61,25 @@ namespace QuickMafs
                 {
                     if (_tiles[row, col] == null)
                     {
-                        _tiles[row, col] = _tileFactory.Create(NewTileParams(row, col));
+                        _tiles[row, col] = _tileFactory.Create(
+                            NewTileParams(row, col,
+                            _isLastANumber ? FontSettings.RandomSymbol() : FontSettings.RandomNumber())
+                        );
                         _tiles[row, col].Selected += OnTileSelected;
+                        _isLastANumber = !_isLastANumber;
                     }
                 }
             }
         }
 
-        private TileParams NewTileParams(int row, int col)
+        private TileParams NewTileParams(int row, int col, Letter letter)
         {
             return new TileParams
             {
                 Row = row,
                 Col = col,
                 Parent = _boardView.transform,
-                Letter = FontSettings.GetRandomLetter(),
+                Letter = letter,
                 Board = this
             };
         }
@@ -98,6 +104,7 @@ namespace QuickMafs
             UpdateSelectedTiles();
             DeselectSelectedTiles();
             _selectedTiles.Clear();
+            _lastOperation = Letter.L_0;
             _boardService.CleanupColumns(_tiles);
             FillBoard();
         }
@@ -142,7 +149,14 @@ namespace QuickMafs
         {
             if (tile.IsTileASymbol())
             {
-                _lastOperation = tile.Letter;
+                if(_lastOperation == Letter.L_minus && tile.Letter == Letter.L_minus)
+                {
+                    _lastOperation = Letter.L_plus;
+                }
+                else if (!(_lastOperation == Letter.L_minus && tile.Letter == Letter.L_plus))
+                {
+                    _lastOperation = tile.Letter;
+                }
             }
             else
             {

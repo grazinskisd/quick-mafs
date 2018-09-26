@@ -31,7 +31,7 @@ namespace QuickMafs
 
         public bool IsCorrectOrder(TileController tile, TileController lastTile)
         {
-            return (lastTile.IsTileANumber() && tile.IsTileASymbol()) ||
+            return tile.IsTileASymbol() ||
                 (tile.IsTileANumber() && lastTile.IsTileASymbol());
         }
 

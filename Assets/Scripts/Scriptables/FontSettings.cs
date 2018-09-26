@@ -32,10 +32,20 @@ namespace QuickMafs
             return Map[letter];
         }
 
-        public static Letter GetRandomLetter()
+        public static Letter RandomLetter()
         {
             var array = System.Enum.GetValues(typeof(Letter));
             return (Letter)array.GetValue(Random.Range(1, array.Length));
+        }
+
+        public static Letter RandomNumber()
+        {
+            return (Letter)Random.Range((int)Letter.L_1, (int)Letter.L_plus);
+        }
+
+        public static Letter RandomSymbol()
+        {
+            return (Letter)Random.Range((int)Letter.L_plus, (int)Letter.L_minus + 1);
         }
 
         [System.Serializable]

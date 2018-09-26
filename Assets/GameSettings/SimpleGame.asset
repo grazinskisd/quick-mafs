@@ -14,6 +14,7 @@ MonoBehaviour:
   FontSettings: {fileID: 11400000, guid: a23c9903cf966a142a3d704db403b0f5, type: 2}
   BoardSettings:
     Width: 7
-    Height: 10
-    DefaultTileColor: {r: 0.21226418, g: 0.42430094, b: 1, a: 1}
-    SelectedTileColor: {r: 0.9339623, g: 0.72532904, b: 0.22467959, a: 1}
+    Height: 7
+  TileSettings:
+    DefaultTileColor: {r: 0.086908154, g: 0.58713895, b: 0.8773585, a: 1}
+    SelectedTileColor: {r: 0.9150943, g: 0.6408253, b: 0.15107687, a: 1}
