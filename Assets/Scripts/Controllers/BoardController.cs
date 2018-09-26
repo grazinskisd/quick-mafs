@@ -20,11 +20,14 @@ namespace QuickMafs
 
         private bool _isLastANumber;
 
+        private ScoreView _scoreView;
+
         [Inject]
         public void Initialize()
         {
             SetupView();
             _input.MouseUp += OnMouseUp;
+            _scoreView = GameObject.FindObjectOfType<ScoreView>();
         }
 
         public bool IsSelectionValid(TileController tile)
@@ -116,10 +119,12 @@ namespace QuickMafs
             {
                 if (_currentResult == 0)
                 {
+                    _scoreView.IncrementScore(2 * _selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count);
                 }
                 else
                 {
+                    _scoreView.IncrementScore(_selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count - 1);
                     lastTile.SetNewLetter((Letter)_currentResult);
                 }
