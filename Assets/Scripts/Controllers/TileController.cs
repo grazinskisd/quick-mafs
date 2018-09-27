@@ -124,7 +124,20 @@ namespace QuickMafs
 
         private void SetDefaultColor()
         {
-            _tileView.Foreground.color = _settings.DefaultTileColor;
+            if (IsTileANumber())
+            {
+                SetTileColor(_settings.DefaultTileColor);
+            }
+            else
+            {
+                SetTileColor(_params.Letter == Letter.L_minus ?
+                    _settings.MinusTileColor : _settings.PlusTileColor);
+            }
+        }
+
+        private void SetTileColor(Color color)
+        {
+            _tileView.Foreground.color = color;
         }
 
         public class Factory: PlaceholderFactory<TileParams, TileController> { }
@@ -134,6 +147,8 @@ namespace QuickMafs
         {
             public Color DefaultTileColor;
             public Color SelectedTileColor;
+            public Color PlusTileColor;
+            public Color MinusTileColor;
 
             [Header("Tweening properties")]
             [Tooltip("Has to be greater than 0. Otherwise causes the BoxCollider to not be visible after scaling up.")]
