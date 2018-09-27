@@ -18,6 +18,9 @@ MonoBehaviour:
   TileSettings:
     DefaultTileColor: {r: 0.086908154, g: 0.58713895, b: 0.8773585, a: 1}
     SelectedTileColor: {r: 0.9150943, g: 0.6408253, b: 0.15107687, a: 1}
+    ScaleOnCreation: {x: 0.1, y: 0.1, z: 0.1}
     DefaultScale: 1
     SelectedScale: 0.85
+    ExcitedScale: 1.6
     ScaleDuration: 0.4
+    MoveTime: 0.3

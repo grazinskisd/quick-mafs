@@ -147,6 +147,7 @@ namespace QuickMafs
             var tile = _selectedTiles[i];
             tile.Destroy();
             tile.Selected -= OnTileSelected;
+            _selectedTiles[i] = null;
             _tiles[tile.Row, tile.Col] = null;
         }
 

@@ -1,6 +1,5 @@
 ﻿using Zenject;
 using UnityEngine;
-using System;
 using DG.Tweening;
 
 namespace QuickMafs
@@ -16,6 +15,8 @@ namespace QuickMafs
         [Inject] private Settings _settings;
 
         private TileParams _params;
+        private bool _isNewLetterSet = false;
+        private Tween _scaleTween;
 
         public event TileControllerEventHandler Selected;
         public Letter Letter { get { return _params.Letter; } }
@@ -26,7 +27,7 @@ namespace QuickMafs
             set
             {
                 var currentPos = _tileView.transform.localPosition;
-                _tileView.transform.localPosition = new Vector2(currentPos.x, value);
+                _tileView.transform.DOLocalMoveY(value, _settings.MoveTime);
                 _params.Col = value;
             }
         }
@@ -46,8 +47,9 @@ namespace QuickMafs
             _tileView.Selected += OnSelected;
             SetNewLetter(_params.Letter);
             SetDefaultColor();
-            _tileView.transform.localScale = Vector3.one * 0.1f;
-            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
+            SetLocalScale(_settings.ScaleOnCreation);
+            TweenScale(_settings.DefaultScale, _settings.ScaleDuration);
+            _isNewLetterSet = false;
         }
 
         private void OnSelected()
@@ -62,7 +64,17 @@ namespace QuickMafs
         {
             IsSelected = false;
             SetDefaultColor();
-            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
+            if (!_isNewLetterSet)
+            {
+                TweenScale(_settings.DefaultScale, _settings.ScaleDuration);
+            }
+            _isNewLetterSet = false;
+        }
+
+        private void TweenScale(float targetScale, float duration)
+        {
+            _scaleTween.Kill();
+            _scaleTween = _tileView.transform.DOScale(targetScale, duration);
         }
 
         public bool IsTileANumber()
@@ -78,9 +90,15 @@ namespace QuickMafs
         public void SetNewLetter(Letter newLetter)
         {
             _params.Letter = newLetter;
+            _isNewLetterSet = true;
             _tileView.Text.sprite = _font.GetSpriteForLetter(newLetter);
-            _tileView.transform.localScale = Vector3.one * (_settings.DefaultScale + 0.4f);
-            _tileView.transform.DOScale(_settings.DefaultScale, _settings.ScaleDuration);
+            SetLocalScale(_settings.ExcitedScale);
+            TweenScale(_settings.DefaultScale, _settings.ScaleDuration);
+        }
+
+        private void SetLocalScale(float scale)
+        {
+            _tileView.transform.localScale = Vector3.one * scale;
         }
 
         public void Destroy()
@@ -92,7 +110,7 @@ namespace QuickMafs
         {
             IsSelected = true;
             SetSelectedColor();
-            _tileView.transform.DOScale(_settings.SelectedScale, _settings.ScaleDuration);
+            TweenScale(_settings.SelectedScale, _settings.ScaleDuration);
             if(Selected != null)
             {
                 Selected(this);
@@ -116,9 +134,17 @@ namespace QuickMafs
         {
             public Color DefaultTileColor;
             public Color SelectedTileColor;
+
+            [Header("Tweening properties")]
+            [Tooltip("Has to be greater than 0. Otherwise causes the BoxCollider to not be visible after scaling up.")]
+            [Range(0.1f, 1)]
+            public float ScaleOnCreation;
             public float DefaultScale;
             public float SelectedScale;
+            public float ExcitedScale;
             public float ScaleDuration;
+
+            public float MoveTime;
         }
     }
 
