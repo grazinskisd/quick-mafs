@@ -17,6 +17,7 @@ namespace QuickMafs
         private TileController[,] _tiles;
         private List<TileController> _selectedTiles = new List<TileController>();
         private int _currentResult;
+        public int _multiplier = 1;
         private Letter _lastOperation;
 
         private bool _isLastANumber;
@@ -106,6 +107,7 @@ namespace QuickMafs
             DeselectSelectedTiles();
             _selectedTiles.Clear();
             _lastOperation = Letter.L_0;
+            _multiplier = 1;
             _boardService.CleanupColumns(_tiles);
             FillBoard();
         }
@@ -115,18 +117,30 @@ namespace QuickMafs
             var lastTile = _selectedTiles[_selectedTiles.Count - 1];
             if (lastTile.IsTileANumber() && _selectedTiles.Count > 1)
             {
+                _scoreController.IncrementScore(CalculateScore());
                 if (_currentResult == 0)
                 {
-                    _scoreController.IncrementScore(2 * _selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count);
                 }
                 else
                 {
-                    _scoreController.IncrementScore(_selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count - 1);
                     lastTile.SetNewLetter((Letter)_currentResult);
                 }
             }
+        }
+
+        private int CalculateScore()
+        {
+            int result = 0;
+            for (int i = 0; i < _selectedTiles.Count; i++)
+            {
+                if (_selectedTiles[i].IsTileANumber())
+                {
+                    result += (int)_selectedTiles[i].Letter;
+                }
+            }
+            return result * _multiplier;
         }
 
         private void DeselectSelectedTiles()
@@ -173,6 +187,10 @@ namespace QuickMafs
             else
             {
                 _currentResult = AreNoTilesSelected() ? (int)tile.Letter : NextResult(tile);
+                if(_currentResult == 0)
+                {
+                    _multiplier++;
+                }
             }
             _selectedTiles.Add(tile);
         }
