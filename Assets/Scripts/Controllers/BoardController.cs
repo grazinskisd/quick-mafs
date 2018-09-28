@@ -12,6 +12,7 @@ namespace QuickMafs
         [Inject] private InputManager _input;
         [Inject] private BoardService _boardService;
         [Inject] private TileController.Factory _tileFactory;
+        [Inject] private ScoreController _scoreController;
 
         private TileController[,] _tiles;
         private List<TileController> _selectedTiles = new List<TileController>();
@@ -20,14 +21,11 @@ namespace QuickMafs
 
         private bool _isLastANumber;
 
-        private ScoreView _scoreView;
-
         [Inject]
         public void Initialize()
         {
             SetupView();
             _input.MouseUp += OnMouseUp;
-            _scoreView = GameObject.FindObjectOfType<ScoreView>();
         }
 
         public bool IsSelectionValid(TileController tile)
@@ -119,12 +117,12 @@ namespace QuickMafs
             {
                 if (_currentResult == 0)
                 {
-                    _scoreView.IncrementScore(2 * _selectedTiles.Count);
+                    _scoreController.IncrementScore(2 * _selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count);
                 }
                 else
                 {
-                    _scoreView.IncrementScore(_selectedTiles.Count);
+                    _scoreController.IncrementScore(_selectedTiles.Count);
                     DestroyTilesInRange(0, _selectedTiles.Count - 1);
                     lastTile.SetNewLetter((Letter)_currentResult);
                 }
