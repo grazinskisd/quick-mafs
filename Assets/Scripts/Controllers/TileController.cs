@@ -95,7 +95,7 @@ namespace QuickMafs
             _isNewLetterSet = true;
             _tileView.Text.sprite = _font.GetSpriteForLetter(newLetter);
             SetLocalScale(_settings.ExcitedScale);
-            TweenScale(_settings.DefaultScale, _settings.ScaleDuration);
+            TweenScale(_settings.DefaultScale, _settings.ExcitedScaleDuration);
         }
 
         private void SetLocalScale(float scale)
@@ -177,6 +177,7 @@ namespace QuickMafs
             public float SelectedScale;
             public float ExcitedScale;
             public float ScaleDuration;
+            public float ExcitedScaleDuration;
 
             public float MoveTime;
         }
