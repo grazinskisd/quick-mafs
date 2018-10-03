@@ -15,6 +15,7 @@ namespace QuickMafs
         [Inject] private ScoreController _scoreController;
 
         private TileController[,] _tiles;
+        private TileController[] _allTiles;
         private List<TileController> _selectedTiles = new List<TileController>();
         private int _currentResult;
         public int _multiplier = 1;
@@ -52,6 +53,7 @@ namespace QuickMafs
         {
             _boardView = GameObject.Instantiate(_boardView);
             _tiles = new TileController[_settings.Width, _settings.Height];
+            _allTiles = new TileController[_settings.Width * _settings.Height];
             FillBoard();
         }
 

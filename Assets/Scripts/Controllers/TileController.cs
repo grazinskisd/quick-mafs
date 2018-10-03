@@ -6,7 +6,7 @@ namespace QuickMafs
 {
     public delegate void TileControllerEventHandler(TileController sender);
 
-    public class TileController
+    public class TileController: IPoolable<IMemoryPool, TileParams>, System.IDisposable
     {
         private const string NAME_FORMAT = "Tile ({0}, {1})";
 
@@ -17,6 +17,8 @@ namespace QuickMafs
         private TileParams _params;
         private bool _isNewLetterSet = false;
         private Tween _scaleTween;
+
+        private IMemoryPool _pool;
 
         public event TileControllerEventHandler Selected;
         public Letter Letter { get { return _params.Letter; } }
@@ -140,7 +142,24 @@ namespace QuickMafs
             _tileView.Foreground.color = color;
         }
 
+        public void OnDespawned()
+        {
+            _pool = null;
+        }
+
+        public void Dispose()
+        {
+            _pool.Despawn(this);
+        }
+
+        public void OnSpawned(IMemoryPool p1, TileParams p2)
+        {
+            _pool = p1;
+            _params = p2;
+        }
+
         public class Factory: PlaceholderFactory<TileParams, TileController> { }
+
 
         [System.Serializable]
         public class Settings
