@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 namespace QuickMafs
 {
-    public class BoardController
+    public class BoardController: IBoardController
     {
         [Inject] private Settings _settings;
         [Inject] private BoardView _boardView;
@@ -14,8 +13,10 @@ namespace QuickMafs
         [Inject] private TileController.Factory _tileFactory;
         [Inject] private ScoreController _scoreController;
 
+        public event BoardEventHandler TileSelected;
+        public event BoardEventHandler MatchMade;
+
         private TileController[,] _tiles;
-        private TileController[] _allTiles;
         private List<TileController> _selectedTiles = new List<TileController>();
         private int _currentResult;
         public int _multiplier = 1;
@@ -53,7 +54,6 @@ namespace QuickMafs
         {
             _boardView = GameObject.Instantiate(_boardView);
             _tiles = new TileController[_settings.Width, _settings.Height];
-            _allTiles = new TileController[_settings.Width * _settings.Height];
             FillBoard();
         }
 
@@ -129,6 +129,7 @@ namespace QuickMafs
                     DestroyTilesInRange(0, _selectedTiles.Count - 1);
                     lastTile.SetNewLetter((Letter)_currentResult);
                 }
+                IssueEvent(MatchMade);
             }
         }
 
@@ -195,6 +196,7 @@ namespace QuickMafs
                 }
             }
             _selectedTiles.Add(tile);
+            IssueEvent(TileSelected);
         }
 
         private bool AreNoTilesSelected()
@@ -211,6 +213,14 @@ namespace QuickMafs
         private int NextResult(TileController tile)
         {
             return _currentResult + _boardService.GetIncrement(_lastOperation, tile);
+        }
+
+        public void IssueEvent(BoardEventHandler eventToIssue)
+        {
+            if(eventToIssue != null)
+            {
+                eventToIssue();
+            }
         }
 
         public class Factory: PlaceholderFactory<BoardController> { }
