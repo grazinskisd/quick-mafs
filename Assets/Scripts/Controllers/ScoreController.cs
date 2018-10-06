@@ -7,7 +7,7 @@ namespace QuickMafs
     {
         [Inject] private ScoreView _scoreView;
 
-        private static string SCORE_FORMAT = "Score: {0}";
+        private static string SCORE_FORMAT = "{0}";
         private int Score;
 
         public void Initialize()
