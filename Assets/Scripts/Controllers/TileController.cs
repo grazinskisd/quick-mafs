@@ -47,6 +47,7 @@ namespace QuickMafs
             _tileView.transform.localPosition = new Vector2(_params.Row, _params.Col);
             _tileView.name = string.Format(NAME_FORMAT, _params.Row, _params.Col);
             _tileView.Selected += OnSelected;
+            _tileView.Foreground.transform.Rotate(Vector3.forward, Random.Range(0, 360));
             SetNewLetter(_params.Letter);
             SetDefaultColor();
             SetLocalScale(_settings.ScaleOnCreation);
