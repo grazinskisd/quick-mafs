@@ -16,10 +16,10 @@ MonoBehaviour:
     Width: 5
     Height: 7
   TileSettings:
-    DefaultTileColor: {r: 0.30860624, g: 0.50197667, b: 0.6886792, a: 1}
+    DefaultTileColor: {r: 1, g: 1, b: 1, a: 1}
     SelectedTileColor: {r: 0.9056604, g: 0.67976797, b: 0.3033108, a: 1}
-    PlusTileColor: {r: 0.48998755, g: 0.6118574, b: 0.7264151, a: 1}
-    MinusTileColor: {r: 0.15267888, g: 0.42896765, b: 0.6886792, a: 1}
+    PlusTileColor: {r: 0.8867924, g: 0.793707, b: 0.47267708, a: 1}
+    MinusTileColor: {r: 0.7169812, g: 0.5169954, b: 0.15218942, a: 1}
     ScaleOnCreation: 0.1
     DefaultScale: 1
     SelectedScale: 0.85
