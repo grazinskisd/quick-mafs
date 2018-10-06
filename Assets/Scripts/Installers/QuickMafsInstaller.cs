@@ -8,12 +8,16 @@ namespace QuickMafs
         public BoardView GameBoard;
         public TileView TileView;
         public ScoreView ScoreView;
+        public BurstEffectView BurstEffectView;
+        public ScoreLocator ScoreLocator;
 
         public override void InstallBindings()
         {
             Container.BindInstance(GameBoard);
             Container.BindInstance(TileView);
             Container.BindInstance(ScoreView);
+            Container.BindInstance(ScoreLocator);
+            Container.BindInstance(BurstEffectView);
 
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
             Container.BindInterfacesAndSelfTo<TickManager>().AsSingle();

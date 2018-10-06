@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,11 @@ namespace QuickMafs
         [Inject] private BoardService _boardService;
         [Inject] private TileController.Factory _tileFactory;
         [Inject] private ScoreController _scoreController;
+
+        [Inject] private BurstEffectView _burstEffectProto;
+        [Inject] private ScoreLocator _scoreLocator;
+
+        private BurstEffectView[,] _burstEffects;
 
         public event BoardEventHandler TileSelected;
         public event BoardEventHandler MatchMade;
@@ -54,6 +60,7 @@ namespace QuickMafs
         {
             _boardView = GameObject.Instantiate(_boardView);
             _tiles = new TileController[_settings.Width, _settings.Height];
+            _burstEffects = new BurstEffectView[_settings.Width, _settings.Height];
             FillBoard();
         }
 
@@ -71,6 +78,12 @@ namespace QuickMafs
                         );
                         _tiles[row, col].Selected += OnTileSelected;
                         _isLastANumber = !_isLastANumber;
+
+                        var effect = GameObject.Instantiate(_burstEffectProto);
+                        effect.transform.position = new Vector2(row, col);
+                        effect.transform.SetParent(_boardView.transform, false);
+                        effect.AttractionBehaviour.Attractor = _scoreLocator.transform;
+                        _burstEffects[row, col] = effect;
                     }
                 }
             }
@@ -119,6 +132,7 @@ namespace QuickMafs
             var lastTile = _selectedTiles[_selectedTiles.Count - 1];
             if (lastTile.IsTileANumber() && _selectedTiles.Count > 1)
             {
+                PlayBurstEffect();
                 _scoreController.IncrementScore(CalculateScore());
                 if (_currentResult == 0)
                 {
@@ -130,6 +144,18 @@ namespace QuickMafs
                     lastTile.SetNewLetter((Letter)_currentResult);
                 }
                 IssueEvent(MatchMade);
+            }
+        }
+
+        private void PlayBurstEffect()
+        {
+            for (int i = 0; i < _selectedTiles.Count; i++)
+            {
+                var tile = _selectedTiles[i];
+                if (tile.IsTileANumber())
+                {
+                    _burstEffects[tile.Row, tile.Col].ParticleSystem.Emit((int)tile.Letter * _multiplier);
+                }
             }
         }
 

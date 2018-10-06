@@ -6,7 +6,7 @@ namespace QuickMafs
 {
     public delegate void TileControllerEventHandler(TileController sender);
 
-    public class TileController: IPoolable<IMemoryPool, TileParams>, System.IDisposable
+    public class TileController
     {
         private const string NAME_FORMAT = "Tile ({0}, {1})";
 
@@ -140,22 +140,6 @@ namespace QuickMafs
         private void SetTileColor(Color color)
         {
             _tileView.Foreground.color = color;
-        }
-
-        public void OnDespawned()
-        {
-            _pool = null;
-        }
-
-        public void Dispose()
-        {
-            _pool.Despawn(this);
-        }
-
-        public void OnSpawned(IMemoryPool p1, TileParams p2)
-        {
-            _pool = p1;
-            _params = p2;
         }
 
         public class Factory: PlaceholderFactory<TileParams, TileController> { }

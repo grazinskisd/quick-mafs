@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 198779909031515144}
   - component: {fileID: 199599234721948798}
   - component: {fileID: 114253549736013450}
+  - component: {fileID: 114991848586780774}
   m_Layer: 0
   m_Name: BurstParticles
   m_TagString: Untagged
@@ -56,6 +57,19 @@ MonoBehaviour:
   Attractor: {fileID: 0}
   System: {fileID: 198779909031515144}
   Gravity: 0.3
+--- !u!114 &114991848586780774
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1603984609687498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08d61d7b927e2c4da54d43989886bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttractionBehaviour: {fileID: 114253549736013450}
+  ParticleSystem: {fileID: 198779909031515144}
 --- !u!198 &198779909031515144
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -125,7 +139,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0

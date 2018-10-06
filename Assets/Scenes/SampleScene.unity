@@ -327,6 +327,46 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &916364428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 916364430}
+  - component: {fileID: 916364429}
+  m_Layer: 0
+  m_Name: ScoreLocator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &916364429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 916364428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9efcb3ace484f049ba5a1d23d56f8d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &916364430
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 916364428}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.89, y: 11.51, z: -0.02734375}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &984269091
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,6 +617,9 @@ MonoBehaviour:
   TileView: {fileID: 114598750980223990, guid: d0300bb5a5e0f5549bb16a731dd4b8e6, type: 2}
   ScoreView: {fileID: 114647040577936762, guid: 09e2fe5ea19d60e40a92cf85ee19ca5e,
     type: 2}
+  BurstEffectView: {fileID: 114991848586780774, guid: 310e8e135154a254ba9265300c6b35ca,
+    type: 2}
+  ScoreLocator: {fileID: 916364429}
 --- !u!114 &2044525578
 MonoBehaviour:
   m_ObjectHideFlags: 0
