@@ -25,8 +25,10 @@ namespace QuickMafs
             Container.BindInterfacesAndSelfTo<BoardService>().AsSingle();
             Container.BindInterfacesAndSelfTo<ScoreController>().AsSingle();
             Container.BindInterfacesAndSelfTo<SoundController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LateTickController>().AsSingle();
             Container.BindFactory<BoardController, BoardController.Factory>().AsSingle();
             Container.BindFactory<TileParams, TileController, TileController.Factory>().AsSingle();
+            Container.BindFactory<ScoreEffectParameters, ScoreEffectController, ScoreEffectController.Factory>().AsSingle();
         }
     }
 }

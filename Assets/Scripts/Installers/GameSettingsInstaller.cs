@@ -10,6 +10,7 @@ namespace QuickMafs
         public BoardController.Settings BoardSettings;
         public TileController.Settings TileSettings;
         public SoundController.Settings SoundSettings;
+        public ScoreEffectController.Settings ScoreEffectSettings;
 
         public override void InstallBindings()
         {
@@ -17,6 +18,7 @@ namespace QuickMafs
             Container.BindInstance(BoardSettings);
             Container.BindInstance(TileSettings);
             Container.BindInstance(SoundSettings);
+            Container.BindInstance(ScoreEffectSettings);
         }
     }
 }

@@ -14,10 +14,9 @@ namespace QuickMafs
         [Inject] private TileController.Factory _tileFactory;
         [Inject] private ScoreController _scoreController;
 
-        [Inject] private BurstEffectView _burstEffectProto;
-        [Inject] private ScoreLocator _scoreLocator;
+        [Inject] private ScoreEffectController.Factory _scoreEffectFacotory;
 
-        private BurstEffectView[,] _burstEffects;
+        private ScoreEffectController[,] _burstEffects;
 
         public event BoardEventHandler TileSelected;
         public event BoardEventHandler MatchMade;
@@ -60,7 +59,7 @@ namespace QuickMafs
         {
             _boardView = GameObject.Instantiate(_boardView);
             _tiles = new TileController[_settings.Width, _settings.Height];
-            _burstEffects = new BurstEffectView[_settings.Width, _settings.Height];
+            _burstEffects = new ScoreEffectController[_settings.Width, _settings.Height];
             FillBoard();
         }
 
@@ -79,11 +78,11 @@ namespace QuickMafs
                         _tiles[row, col].Selected += OnTileSelected;
                         _isLastANumber = !_isLastANumber;
 
-                        var effect = GameObject.Instantiate(_burstEffectProto);
-                        effect.transform.position = new Vector2(row, col);
-                        effect.transform.SetParent(_boardView.transform, false);
-                        effect.AttractionBehaviour.Attractor = _scoreLocator.transform;
-                        _burstEffects[row, col] = effect;
+                        _burstEffects[row, col] = _scoreEffectFacotory.Create(new ScoreEffectParameters {
+                            Row = row,
+                            Col = col,
+                            Parent = _boardView.transform
+                        });
                     }
                 }
             }
@@ -154,7 +153,7 @@ namespace QuickMafs
                 var tile = _selectedTiles[i];
                 if (tile.IsTileANumber())
                 {
-                    _burstEffects[tile.Row, tile.Col].ParticleSystem.Emit((int)tile.Letter * _multiplier);
+                    _burstEffects[tile.Row, tile.Col].Emit((int)tile.Letter * _multiplier);
                 }
             }
         }

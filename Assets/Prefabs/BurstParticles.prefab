@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4774807661457772}
   - component: {fileID: 198779909031515144}
   - component: {fileID: 199599234721948798}
-  - component: {fileID: 114253549736013450}
   - component: {fileID: 114991848586780774}
   m_Layer: 0
   m_Name: BurstParticles
@@ -43,20 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &114253549736013450
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1603984609687498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b6531cd6c0ab1b4a991922576af17ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Attractor: {fileID: 0}
-  System: {fileID: 198779909031515144}
-  Gravity: 0.3
 --- !u!114 &114991848586780774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -68,7 +53,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a08d61d7b927e2c4da54d43989886bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttractionBehaviour: {fileID: 114253549736013450}
   ParticleSystem: {fileID: 198779909031515144}
 --- !u!198 &198779909031515144
 ParticleSystem:
@@ -77,13 +61,13 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1603984609687498}
   serializedVersion: 5
-  lengthInSec: 5
+  lengthInSec: 10
   simulationSpeed: 1
   stopAction: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
-  useUnscaledTime: 0
+  playOnAwake: 0
+  useUnscaledTime: 1
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
   startDelay:
@@ -149,7 +133,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 10
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -318,7 +302,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.4
+      scalar: 0.6
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3538,7 +3522,7 @@ ParticleSystem:
   CollisionModule:
     enabled: 0
     serializedVersion: 3
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
@@ -3718,11 +3702,11 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
-    enabled: 0
+    enabled: 1
     collisionShape0: {fileID: 0}
     collisionShape1: {fileID: 0}
     collisionShape2: {fileID: 0}
@@ -3731,7 +3715,7 @@ ParticleSystem:
     collisionShape5: {fileID: 0}
     inside: 1
     outside: 0
-    enter: 0
+    enter: 2
     exit: 0
     radiusScale: 1
   SubModule:
