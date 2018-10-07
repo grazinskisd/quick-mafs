@@ -6,17 +6,18 @@ namespace QuickMafs
 {
     public delegate void TileControllerEventHandler(TileController sender);
 
-    public class TileController
+    public class TileController: IPoolable<TileParams, IMemoryPool>, System.IDisposable
     {
         private const string NAME_FORMAT = "Tile ({0}, {1})";
 
-        [Inject] private TileView _tileView;
+        [Inject] private TileView _tileViewProto;
         [Inject] private FontSettings _font;
         [Inject] private Settings _settings;
 
         private TileParams _params;
         private bool _isNewLetterSet = false;
         private Tween _scaleTween;
+        private TileView _view;
 
         private IMemoryPool _pool;
 
@@ -28,26 +29,44 @@ namespace QuickMafs
             get { return _params.Col; }
             set
             {
-                var currentPos = _tileView.transform.localPosition;
-                _tileView.transform.DOLocalMoveY(value, _settings.MoveTime);
+                var currentPos = _view.transform.localPosition;
+                _view.transform.DOLocalMoveY(value, _settings.MoveTime);
                 _params.Col = value;
             }
         }
 
-        [Inject]
-        private void Initialize(TileParams parameters)
+        public void OnSpawned(TileParams parameters, IMemoryPool pool)
         {
+            if (_view == null)
+            {
+                _view = GameObject.Instantiate(_tileViewProto);
+                _view.Selected += OnSelected;
+            }
+            Debug.Log("Spawned");
+            _pool = pool;
             _params = parameters;
-            CreateTile();
+            InitializeTile();
+            _view.gameObject.SetActive(true);
         }
 
-        private void CreateTile()
+        public void Dispose()
         {
-            _tileView = GameObject.Instantiate(_tileView, _params.Parent, false);
-            _tileView.transform.localPosition = new Vector2(_params.Row, _params.Col);
-            _tileView.name = string.Format(NAME_FORMAT, _params.Row, _params.Col);
-            _tileView.Selected += OnSelected;
-            _tileView.Foreground.transform.Rotate(Vector3.forward, Random.Range(0, 360));
+            _pool.Despawn(this);
+        }
+
+        public void OnDespawned()
+        {
+            Debug.Log("Despawned");
+            _view.gameObject.SetActive(false);
+            _pool = null;
+        }
+
+        private void InitializeTile()
+        {
+            _view.transform.SetParent(_params.Parent, false);
+            _view.transform.localPosition = new Vector2(_params.Row, _params.Col);
+            _view.name = string.Format(NAME_FORMAT, _params.Row, _params.Col);
+            _view.Foreground.transform.Rotate(Vector3.forward, Random.Range(0, 360));
             SetNewLetter(_params.Letter);
             SetDefaultColor();
             SetLocalScale(_settings.ScaleOnCreation);
@@ -77,7 +96,7 @@ namespace QuickMafs
         private void TweenScale(float targetScale, float duration)
         {
             _scaleTween.Kill();
-            _scaleTween = _tileView.transform.DOScale(targetScale, duration);
+            _scaleTween = _view.transform.DOScale(targetScale, duration);
         }
 
         public bool IsTileANumber()
@@ -94,19 +113,14 @@ namespace QuickMafs
         {
             _params.Letter = newLetter;
             _isNewLetterSet = true;
-            _tileView.Text.sprite = _font.GetSpriteForLetter(newLetter);
+            _view.Text.sprite = _font.GetSpriteForLetter(newLetter);
             SetLocalScale(_settings.ExcitedScale);
             TweenScale(_settings.DefaultScale, _settings.ExcitedScaleDuration);
         }
 
         private void SetLocalScale(float scale)
         {
-            _tileView.transform.localScale = Vector3.one * scale;
-        }
-
-        public void Destroy()
-        {
-            GameObject.Destroy(_tileView.gameObject);
+            _view.transform.localScale = Vector3.one * scale;
         }
 
         private void SelectTile()
@@ -122,7 +136,7 @@ namespace QuickMafs
 
         private void SetSelectedColor()
         {
-            _tileView.Foreground.color = _settings.SelectedTileColor;
+            _view.Foreground.color = _settings.SelectedTileColor;
         }
 
         private void SetDefaultColor()
@@ -140,7 +154,7 @@ namespace QuickMafs
 
         private void SetTileColor(Color color)
         {
-            _tileView.Foreground.color = color;
+            _view.Foreground.color = color;
         }
 
         public class Factory: PlaceholderFactory<TileParams, TileController> { }

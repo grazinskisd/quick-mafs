@@ -47,7 +47,7 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _tiles.GetLength(1); col++)
                 {
-                    _tiles[row, col].Destroy();
+                    _tiles[row, col].Dispose();
                     _tiles[row, col] = null;
                 }
             }
@@ -201,7 +201,7 @@ namespace QuickMafs
         private void DestroyTile(int i)
         {
             var tile = _selectedTiles[i];
-            tile.Destroy();
+            tile.Dispose();
             tile.Selected -= OnTileSelected;
             _selectedTiles[i] = null;
             _tiles[tile.Row, tile.Col] = null;
