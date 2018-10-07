@@ -42,7 +42,6 @@ namespace QuickMafs
                 _view = GameObject.Instantiate(_tileViewProto);
                 _view.Selected += OnSelected;
             }
-            Debug.Log("Spawned");
             _pool = pool;
             _params = parameters;
             InitializeTile();
@@ -56,7 +55,6 @@ namespace QuickMafs
 
         public void OnDespawned()
         {
-            Debug.Log("Despawned");
             _view.gameObject.SetActive(false);
             _pool = null;
         }
