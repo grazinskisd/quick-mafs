@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,7 @@ namespace QuickMafs
         [Inject] private BoardService _boardService;
         [Inject] private TileController.Factory _tileFactory;
         [Inject] private ScoreController _scoreController;
+        [Inject] private GameMenuController _gameMenu;
 
         [Inject] private ScoreEffectController.Factory _scoreEffectFacotory;
 
@@ -33,6 +35,23 @@ namespace QuickMafs
         {
             SetupView();
             _input.MouseUp += OnMouseUp;
+            _gameMenu.RestartPressed += ResetBoard;
+        }
+
+        private void ResetBoard()
+        {
+            _selectedTiles.Clear();
+            _lastOperation = Letter.L_0;
+            _multiplier = 1;
+            for (int row = 0; row < _tiles.GetLength(0); row++)
+            {
+                for (int col = 0; col < _tiles.GetLength(1); col++)
+                {
+                    _tiles[row, col].Destroy();
+                    _tiles[row, col] = null;
+                }
+            }
+            FillBoard();
         }
 
         public bool IsSelectionValid(TileController tile)
@@ -76,14 +95,19 @@ namespace QuickMafs
                         );
                         _tiles[row, col].Selected += OnTileSelected;
                         _isLastANumber = !_isLastANumber;
+                    }
 
-                        _burstEffects[row, col] = _scoreEffectFacotory.Create(new ScoreEffectParameters {
+                    if (_burstEffects[row, col] == null)
+                    {
+                        _burstEffects[row, col] = _scoreEffectFacotory.Create(new ScoreEffectParameters
+                        {
                             Row = row,
                             Col = col,
                             Parent = _boardView.transform
                         });
                         _burstEffects[row, col].ParticlesKilled += OnParticlesKilled;
                     }
+
                 }
             }
         }

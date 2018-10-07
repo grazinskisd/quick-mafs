@@ -1,11 +1,13 @@
 ﻿using Zenject;
 using UnityEngine;
+using System;
 
 namespace QuickMafs
 {
     public class SoundController : IInitializable
     {
         [Inject] private Settings _settings;
+        [Inject] private GameMenuController _gameMenu;
 
         private AudioSource _audioSource;
         private BoardController _board;
@@ -13,6 +15,12 @@ namespace QuickMafs
         public void Initialize()
         {
             _audioSource = GameObject.FindObjectOfType<AudioSource>();
+            _gameMenu.MutePressed += OnMutePressed;
+        }
+
+        private void OnMutePressed()
+        {
+            _audioSource.mute = !_audioSource.mute;
         }
 
         public void AssignBoard(BoardController board)
