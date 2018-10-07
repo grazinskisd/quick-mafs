@@ -4,9 +4,13 @@ using DG.Tweening;
 
 namespace QuickMafs
 {
+    public delegate void ScoreEventHandler(int score);
+
     public class ScoreController : IInitializable
     {
         [Inject] private ScoreView _scoreView;
+
+        public event ScoreEventHandler ScoreUpdated;
 
         private static string SCORE_FORMAT = "{0}";
         private int Score;
@@ -24,6 +28,10 @@ namespace QuickMafs
         {
             Score += byValue;
             UpdateScoreText();
+            if(ScoreUpdated != null)
+            {
+                ScoreUpdated(Score);
+            }
         }
 
         private void UpdateScoreText()

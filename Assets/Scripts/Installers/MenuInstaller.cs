@@ -11,6 +11,7 @@ namespace QuickMafs
         {
             Container.BindInstance(MenuView);
 
+            Container.BindInterfacesAndSelfTo<PlayerHighscoreService>().AsSingle();
             Container.BindInterfacesAndSelfTo<MainMenuController>().AsSingle();
         }
     }

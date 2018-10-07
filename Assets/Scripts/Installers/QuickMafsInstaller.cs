@@ -22,6 +22,7 @@ namespace QuickMafs
             Container.BindInstance(GameMenuView);
 
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<HighscoreController>().AsSingle();
             Container.BindInterfacesAndSelfTo<TickManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<BoardService>().AsSingle();
@@ -29,6 +30,7 @@ namespace QuickMafs
             Container.BindInterfacesAndSelfTo<SoundController>().AsSingle();
             Container.BindInterfacesAndSelfTo<LateTickController>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameMenuController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerHighscoreService>().AsSingle();
             Container.BindFactory<BoardController, BoardController.Factory>().AsSingle();
             Container.BindFactory<TileParams, TileController, TileController.Factory>().FromPoolableMemoryPool(x => x.WithInitialSize(5*7));
             Container.BindFactory<ScoreEffectParameters, ScoreEffectController, ScoreEffectController.Factory>().AsSingle();
