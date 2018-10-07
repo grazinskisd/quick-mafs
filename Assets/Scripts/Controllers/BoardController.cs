@@ -110,6 +110,7 @@ namespace QuickMafs
 
                 }
             }
+            _isLastANumber = !_isLastANumber;
         }
 
         private void OnParticlesKilled(int particleCount)
