@@ -47,6 +47,7 @@ namespace QuickMafs
             {
                 for (int col = 0; col < _tiles.GetLength(1); col++)
                 {
+                    _tiles[row, col].Selected -= OnTileSelected;
                     _tiles[row, col].Dispose();
                     _tiles[row, col] = null;
                 }
