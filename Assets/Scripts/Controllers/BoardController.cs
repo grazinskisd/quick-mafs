@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -83,9 +82,15 @@ namespace QuickMafs
                             Col = col,
                             Parent = _boardView.transform
                         });
+                        _burstEffects[row, col].ParticlesKilled += OnParticlesKilled;
                     }
                 }
             }
+        }
+
+        private void OnParticlesKilled(int particleCount)
+        {
+            _scoreController.IncrementScore(particleCount);
         }
 
         private TileParams NewTileParams(int row, int col, Letter letter)
@@ -132,7 +137,6 @@ namespace QuickMafs
             if (lastTile.IsTileANumber() && _selectedTiles.Count > 1)
             {
                 PlayBurstEffect();
-                _scoreController.IncrementScore(CalculateScore());
                 if (_currentResult == 0)
                 {
                     DestroyTilesInRange(0, _selectedTiles.Count);
@@ -156,19 +160,6 @@ namespace QuickMafs
                     _burstEffects[tile.Row, tile.Col].Emit((int)tile.Letter * _multiplier);
                 }
             }
-        }
-
-        private int CalculateScore()
-        {
-            int result = 0;
-            for (int i = 0; i < _selectedTiles.Count; i++)
-            {
-                if (_selectedTiles[i].IsTileANumber())
-                {
-                    result += (int)_selectedTiles[i].Letter;
-                }
-            }
-            return result * _multiplier;
         }
 
         private void DeselectSelectedTiles()

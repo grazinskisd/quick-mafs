@@ -3,12 +3,15 @@ using UnityEngine;
 
 namespace QuickMafs
 {
+    public delegate void ParticleTriggerEnterEventHandler(int particleCount);
     public class ScoreEffectController
     {
         [Inject] private BurstEffectView _effect;
         [Inject] private ScoreLocator _scoreLocator;
         [Inject] private LateTickController _lateTick;
         [Inject] private Settings _settings;
+
+        public event ParticleTriggerEnterEventHandler ParticlesKilled;
 
         private ScoreEffectParameters _params;
         private ParticleSystem.Particle[] _particles;
@@ -24,10 +27,19 @@ namespace QuickMafs
             _effect = GameObject.Instantiate(_effect);
             _effect.transform.position = new Vector2(_params.Row, _params.Col);
             _effect.transform.SetParent(_params.Parent, false);
-
+            _effect.ParticleTrigger += OnParticleTrigger;
             _effect.ParticleSystem.trigger.SetCollider(0, _scoreLocator.Collider);
 
             _particles = new ParticleSystem.Particle[_effect.ParticleSystem.main.maxParticles];
+        }
+
+        private void OnParticleTrigger()
+        {
+            int numEnter = _effect.ParticleSystem.GetSafeTriggerParticlesSize(ParticleSystemTriggerEventType.Enter);
+            if(ParticlesKilled != null)
+            {
+                ParticlesKilled(numEnter);
+            }
         }
 
         private void LateTick()

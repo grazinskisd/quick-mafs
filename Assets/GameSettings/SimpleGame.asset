@@ -32,4 +32,4 @@ MonoBehaviour:
     TileSelectedVolume: 0.2
     MatchMade: {fileID: 8300000, guid: 7e141e325c6f3174f981dc0a944fdc45, type: 3}
   ScoreEffectSettings:
-    Gravity: 15
+    Gravity: 9

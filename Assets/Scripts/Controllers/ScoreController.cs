@@ -1,5 +1,6 @@
 ﻿using Zenject;
 using UnityEngine;
+using DG.Tweening;
 
 namespace QuickMafs
 {
@@ -9,6 +10,8 @@ namespace QuickMafs
 
         private static string SCORE_FORMAT = "{0}";
         private int Score;
+
+        private Tween _currentTween;
 
         public void Initialize()
         {
