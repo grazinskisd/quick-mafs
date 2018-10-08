@@ -1,5 +1,6 @@
 ﻿using Zenject;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace QuickMafs
 {
@@ -11,7 +12,13 @@ namespace QuickMafs
         public void Initialize()
         {
             _view.PlayButton.onClick.AddListener(OnPlayPressed);
+            _view.tutorialButton.onClick.AddListener(OnTutorialPressed);
             _view.HighscoreText.text = _highscoreService.Highscore.ToString();
+        }
+
+        private void OnTutorialPressed()
+        {
+            SceneManager.LoadScene(Scene.TUTORIAL.SceneName, LoadSceneMode.Single);
         }
 
         private void OnPlayPressed()
