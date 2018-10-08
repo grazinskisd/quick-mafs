@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c05601959f8bea419eecda31845ce5f, type: 3}
-  m_Name: Page7
+  m_Name: Page8
   m_EditorClassIdentifier: 
-  Image: {fileID: 21300000, guid: cca83a8ffa85cde4bb07b6585f339dbe, type: 3}
-  Text: If you get stuck, you can reset the board once after watching a short ad.
+  Image: {fileID: 0}
+  Text: Enjoy practicing simple maths and setting the new highscore!
