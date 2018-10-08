@@ -11,5 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c05601959f8bea419eecda31845ce5f, type: 3}
   m_Name: Page3
   m_EditorClassIdentifier: 
-  Image: {fileID: 21300000, guid: 366dc113b61b8894c943b55256cb27ae, type: 3}
+  Image: {fileID: 21300000, guid: 080220dd57f320240aed16484a4516a5, type: 3}
   Text: If result is 0, the score is doubled.

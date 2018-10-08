@@ -210,6 +210,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114306779479212256, guid: 43fc15a9dcb96ae4b884bffbd494b682,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114306779479212256, guid: 43fc15a9dcb96ae4b884bffbd494b682,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114965469225883300, guid: 43fc15a9dcb96ae4b884bffbd494b682,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -238,46 +248,6 @@ Prefab:
     - target: {fileID: 114547547536262314, guid: 43fc15a9dcb96ae4b884bffbd494b682,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114306779479212256, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114306779479212256, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224345819126843924, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: -4
-      objectReference: {fileID: 0}
-    - target: {fileID: 224345819126843924, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 119
-      objectReference: {fileID: 0}
-    - target: {fileID: 224345819126843924, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 224345819126843924, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 224478885849680116, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224746079320927616, guid: 43fc15a9dcb96ae4b884bffbd494b682,
-        type: 2}
-      propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
