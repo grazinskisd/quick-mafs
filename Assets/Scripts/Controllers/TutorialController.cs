@@ -60,7 +60,15 @@ namespace QuickMafs
 
         private void DisplayPage(TutorialPage page)
         {
-            _view.TutorialImage.sprite = page.Image;
+            if (page.Image != null)
+            {
+                _view.TutorialImage.enabled = true;
+                _view.TutorialImage.sprite = page.Image;
+            }
+            else
+            {
+                _view.TutorialImage.enabled = false;
+            }
             _view.TutorialText.text = page.Text;
         }
     }
