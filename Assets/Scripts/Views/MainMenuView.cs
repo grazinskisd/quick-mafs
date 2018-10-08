@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace QuickMafs
@@ -6,6 +7,6 @@ namespace QuickMafs
     public class MainMenuView: MonoBehaviour
     {
         public Button PlayButton;
-        public Text HighscoreText;
+        public TextMeshProUGUI HighscoreText;
     }
 }
