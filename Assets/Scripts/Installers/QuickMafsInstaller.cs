@@ -23,6 +23,7 @@ namespace QuickMafs
 
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
             Container.BindInterfacesAndSelfTo<HighscoreController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AdsController>().AsSingle();
             Container.BindInterfacesAndSelfTo<TickManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<BoardService>().AsSingle();

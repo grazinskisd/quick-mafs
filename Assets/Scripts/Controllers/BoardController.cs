@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -13,7 +12,7 @@ namespace QuickMafs
         [Inject] private BoardService _boardService;
         [Inject] private TileController.Factory _tileFactory;
         [Inject] private ScoreController _scoreController;
-        [Inject] private GameMenuController _gameMenu;
+        [Inject] private AdsController _adsController;
 
         [Inject] private ScoreEffectController.Factory _scoreEffectFacotory;
 
@@ -35,7 +34,7 @@ namespace QuickMafs
         {
             SetupView();
             _input.MouseUp += OnMouseUp;
-            _gameMenu.RestartPressed += ResetBoard;
+            _adsController.AdWatched += ResetBoard;
         }
 
         private void ResetBoard()

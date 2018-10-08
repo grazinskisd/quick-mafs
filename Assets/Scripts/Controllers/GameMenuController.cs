@@ -19,6 +19,11 @@ namespace QuickMafs
             _view.MuteButton.onClick.AddListener(IssueMutePressed);
         }
 
+        public void SetRestartButtonInteractable(bool isInteractable)
+        {
+            _view.RestartButton.interactable = isInteractable;
+        }
+
         private void IssueMutePressed()
         {
             IssueEvent(MutePressed);
