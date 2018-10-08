@@ -91,7 +91,7 @@ namespace QuickMafs
                     {
                         _tiles[row, col] = _tileFactory.Create(
                             NewTileParams(row, col,
-                            _isLastANumber ? FontSettings.RandomSymbol() : FontSettings.RandomNumber())
+                            _isLastANumber ? LetterUtil.RandomSymbol() : LetterUtil.RandomNumber())
                         );
                         _tiles[row, col].Selected += OnTileSelected;
                         _isLastANumber = !_isLastANumber;

@@ -5,8 +5,6 @@ namespace QuickMafs
 {
     public class BoardService
     {
-        [Inject] private FontSettings _font;
-
         public void CleanupColumns(TileController[,] tiles)
         {
             int nullCount = 0;

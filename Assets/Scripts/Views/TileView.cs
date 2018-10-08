@@ -6,9 +6,8 @@ namespace QuickMafs
 
     public class TileView: MonoBehaviour
     {
-        public SpriteRenderer Background;
         public SpriteRenderer Foreground;
-        public SpriteRenderer Text;
+        public TMPro.TextMeshPro Text;
 
         public event TileViewEventHandler Selected;
         public event TileViewEventHandler Unselected;

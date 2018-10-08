@@ -11,7 +11,6 @@ namespace QuickMafs
         private const string NAME_FORMAT = "Tile ({0}, {1})";
 
         [Inject] private TileView _tileViewProto;
-        [Inject] private FontSettings _font;
         [Inject] private Settings _settings;
 
         private TileParams _params;
@@ -111,7 +110,7 @@ namespace QuickMafs
         {
             _params.Letter = newLetter;
             _isNewLetterSet = true;
-            _view.Text.sprite = _font.GetSpriteForLetter(newLetter);
+            _view.Text.text = LetterUtil.LetterToString(_params.Letter);
             SetLocalScale(_settings.ExcitedScale);
             TweenScale(_settings.DefaultScale, _settings.ExcitedScaleDuration);
         }
