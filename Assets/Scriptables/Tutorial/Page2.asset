@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Name: Page2
   m_EditorClassIdentifier: 
   Image: {fileID: 21300000, guid: 366dc113b61b8894c943b55256cb27ae, type: 3}
-  Text: 'Score is equal to all numbers in tiles summed. '
+  Text: 'Score is equal to all numbers in the selected tiles summed. '
