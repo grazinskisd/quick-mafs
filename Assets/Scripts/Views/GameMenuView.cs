@@ -8,5 +8,9 @@ namespace QuickMafs
         public Button RestartButton;
         public Button ExitButton;
         public Button MuteButton;
+
+        public Image MuteButtonImage;
+        public Sprite HighVolumeSprite;
+        public Sprite NoVolumeSprite;
     }
 }

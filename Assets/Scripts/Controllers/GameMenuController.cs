@@ -1,4 +1,6 @@
-﻿using Zenject;
+﻿using System;
+using UnityEngine;
+using Zenject;
 
 namespace QuickMafs
 {
@@ -11,6 +13,8 @@ namespace QuickMafs
         public event GameMenuEventHandler RestartPressed;
         public event GameMenuEventHandler ExitPressed;
         public event GameMenuEventHandler MutePressed;
+
+        private bool _isVolumeMuted = false;
 
         public void Initialize()
         {
@@ -26,7 +30,14 @@ namespace QuickMafs
 
         private void IssueMutePressed()
         {
+            _isVolumeMuted = !_isVolumeMuted;
+            _view.MuteButtonImage.sprite = GetMuteSprite();
             IssueEvent(MutePressed);
+        }
+
+        private Sprite GetMuteSprite()
+        {
+            return _isVolumeMuted ? _view.NoVolumeSprite : _view.HighVolumeSprite;
         }
 
         private void IssueExitPressed()

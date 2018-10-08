@@ -297,6 +297,9 @@ MonoBehaviour:
   RestartButton: {fileID: 114384633725175336}
   ExitButton: {fileID: 114471853677026240}
   MuteButton: {fileID: 114157833200348832}
+  MuteButtonImage: {fileID: 114319855477410274}
+  HighVolumeSprite: {fileID: 21300000, guid: 080ac5d1e8febbe4088fef80e63481bc, type: 3}
+  NoVolumeSprite: {fileID: 21300000, guid: f86708fccf3a04147b11494b42152b72, type: 3}
 --- !u!114 &114384633725175336
 MonoBehaviour:
   m_ObjectHideFlags: 1
