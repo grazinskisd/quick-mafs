@@ -19,8 +19,6 @@ namespace QuickMafs
 
         public void Initialize()
         {
-            var canvas = GameObject.FindObjectOfType<Canvas>();
-            _scoreView = GameObject.Instantiate(_scoreView, canvas.transform, false);
             UpdateScoreText();
         }
 
