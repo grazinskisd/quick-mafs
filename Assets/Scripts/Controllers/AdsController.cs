@@ -16,7 +16,7 @@ namespace QuickMafs
         private bool _isAdAlreadyWatched = false;
 
         // TODO: change to real value
-        private const string GAMEID = "1486550";
+        private const string GAMEID = "2840080";
         private const string PLACEMENTID = "rewardedVideo";
 
         public void Initialize()
